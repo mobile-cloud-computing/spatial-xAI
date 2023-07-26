@@ -1,0 +1,38 @@
+name: Run SPATIAL CI/CD workflow for registering xAI services
+on: push
+
+jobs:
+  deck-sync:
+    runs-on: ubuntu-latest
+    steps:
+      
+      - uses: kong/setup-inso@v1
+        with:
+          inso-version: 3.5.0
+          wrapper: true
+      - run: inso --version
+        id: inso_version
+      - run: echo '${{ toJson(steps.inso_version.outputs)}}'
+      
+      - name: Clone repo
+        uses: actions/checkout@v2
+      
+      - name: Get Yaml from opeapi.json
+        uses: mikefarah/yq@master
+        with:
+          cmd: yq  -P  openapi.json>openapi.yaml
+
+      - name: Isno Generate Config
+        uses: kong/setup-inso@v1
+        with:
+          inso-version: 3.5.0
+      - run: |
+          inso generate openapi.yaml -o fastapi-inso.yaml --verbose
+          
+      - name: Setup deck
+        uses: kong/setup-deck@v1
+        with:
+          deck-version: "1.8.0"
+      - name: Run deck sync
+        run: |
+          deck sync -s fastapi-deck-import.yaml  --kong-addr http://172.17.90.181:8001/

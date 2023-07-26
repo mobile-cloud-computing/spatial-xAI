@@ -1,0 +1,41 @@
+_format_version: "1.1"
+services:
+  - name: XAI_Microservices
+    protocol: http
+    host: 192.168.42.93
+    port: 80
+    path: /
+    plugins: []
+    routes:
+      - tags:
+          &a1
+          - OAS3_import
+          - OAS3file_openapi.yaml
+        name: XAI_Microservices-read_root_test_get
+        methods:
+          - GET
+        paths:
+          - /test$
+        strip_path: false
+      - tags: *a1
+        name: XAI_Microservices-predict_api_predict_image_post
+        methods:
+          - POST
+        paths:
+          - /predict/image$
+        strip_path: false
+      - tags: *a1
+        name: XAI_Microservices-explain_api_explain_lime_image_post
+        methods:
+          - POST
+        paths:
+          - /explain_lime/image$
+        strip_path: false
+      - tags: *a1
+        name: XAI_Microservices-explain_api_explain_shap_image_post
+        methods:
+          - POST
+        paths:
+          - /explain_shap/image$
+        strip_path: false
+    tags: *a1

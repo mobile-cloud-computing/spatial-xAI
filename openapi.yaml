@@ -1,0 +1,165 @@
+openapi: 3.0.2
+info:
+  title: XAI Microservices
+  description: |2
+    xAI Microservices APIs helps you to understand the internal model structure and provide you explanation.
+    ## Image Class Prediction Service
+
+    You can just pass an image to the Predict API and get prediction back as JSON
+
+    ## LIME and SHAP Explainability Services
+
+    Just pass your image to the LIME Microservice and this service provide you the results in JSON
+
+    ## Occlusion Sensitivity Explainability Service
+    * *Send Image True Label** (_cardboard,glass,metal,paper,plastic,trash_).
+  termsOfService: https://dps.cs.ut.ee/index.html
+  contact:
+    name: Mehrdad Asadi, Ph.D.
+    url: https://dps.cs.ut.ee/people.html
+    email: mehrdad.asadi@ut.ee
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  version: 0.0.1
+servers:
+  - url: http://192.168.42.93
+paths:
+  /test:
+    get:
+      summary: Read Root
+      operationId: read_root_test_get
+      responses:
+        "200":
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /predict/image:
+    post:
+      summary: Predict Api
+      operationId: predict_api_predict_image_post
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Body_predict_api_predict_image_post'
+        required: true
+      responses:
+        "200":
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        "422":
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /explain_lime/image:
+    post:
+      summary: Explain Api
+      operationId: explain_api_explain_lime_image_post
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Body_explain_api_explain_lime_image_post'
+        required: true
+      responses:
+        "200":
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        "422":
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /explain_shap/image:
+    post:
+      summary: Explain Api
+      operationId: explain_api_explain_shap_image_post
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Body_explain_api_explain_shap_image_post'
+        required: true
+      responses:
+        "200":
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        "422":
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    Body_explain_api_explain_lime_image_post:
+      title: Body_explain_api_explain_lime_image_post
+      required:
+        - file
+      type: object
+      properties:
+        file:
+          title: File
+          type: string
+          format: binary
+    Body_explain_api_explain_shap_image_post:
+      title: Body_explain_api_explain_shap_image_post
+      required:
+        - file
+      type: object
+      properties:
+        file:
+          title: File
+          type: string
+          format: binary
+    Body_predict_api_predict_image_post:
+      title: Body_predict_api_predict_image_post
+      required:
+        - file
+      type: object
+      properties:
+        file:
+          title: File
+          type: string
+          format: binary
+    HTTPValidationError:
+      title: HTTPValidationError
+      type: object
+      properties:
+        detail:
+          title: Detail
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationError'
+    ValidationError:
+      title: ValidationError
+      required:
+        - loc
+        - msg
+        - type
+      type: object
+      properties:
+        loc:
+          title: Location
+          type: array
+          items:
+            anyOf:
+              - type: string
+              - type: integer
+        msg:
+          title: Message
+          type: string
+        type:
+          title: Error Type
+          type: string

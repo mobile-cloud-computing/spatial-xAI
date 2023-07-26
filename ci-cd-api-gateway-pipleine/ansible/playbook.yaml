@@ -1,0 +1,193 @@
+---
+- hosts: all
+  become: true
+  tasks:
+  - name: Create docker deamon directory
+    file:
+      path: /etc/docker/
+      state: directory
+
+  - name: Creating a file with content
+    copy:
+      dest: "/etc/docker/daemon.json"
+      content: |
+        {
+          "bip": "192.168.67.1/24",
+          "fixed-cidr": "192.168.67.0/24",
+          "storage-driver": "overlay2",
+          "mtu": 1400,
+          "default-address-pools": [
+            {
+              "base": "192.168.167.1/24",
+              "size": 24
+            },
+            {
+              "base": "192.168.168.1/24",
+              "size": 24
+            },
+            {
+              "base": "192.168.169.1/24",
+              "size": 24
+            },
+            {
+              "base": "192.168.170.1/24",
+              "size": 24
+            },
+            {
+              "base": "192.168.171.1/24",
+              "size": 24
+            },
+            {
+              "base": "192.168.172.1/24",
+              "size": 24
+            },
+            {
+              "base": "192.168.173.1/24",
+              "size": 24
+            },
+            {
+              "base": "192.168.174.1/24",
+              "size": 24
+            }
+          ]
+        }
+
+
+  - name: Install aptitude
+    apt:
+      name: aptitude
+      state: latest
+      update_cache: true
+
+  - name: Install required system packages
+    apt:
+      pkg:
+        - apt-transport-https
+        - ca-certificates
+        - curl
+        - software-properties-common
+        - virtualenv
+        - python3-setuptools
+      state: latest
+      update_cache: true
+
+  - name: Add Docker GPG apt Key
+    apt_key:
+      url: https://download.docker.com/linux/ubuntu/gpg
+      state: present
+
+  - name: Add Docker Repository
+    apt_repository:
+      repo: deb https://download.docker.com/linux/ubuntu focal stable
+      state: present
+
+  - name: Update apt and install docker-ce
+    apt:
+      name: docker-ce
+      state: latest
+      update_cache: true
+
+  - name: Add the ubuntu to the docker group
+    user:
+      name: ubuntu
+      groups: docker
+      append: yes
+    tags:
+      - docker
+
+  - name: Start the Docker service
+    service:
+      name: docker
+      state: started
+      enabled: yes
+    tags:
+      - docker
+
+  - name: Update apt cache
+    apt:
+      update_cache: yes
+    become: true
+
+  - name: Install Python-pip dependencies
+    apt:
+      name: "{{ item }}"
+      state: present
+    become: true
+    loop:
+      - python3-pip
+      - python3-dev
+
+  - name: Download get-pip.py
+    command: wget https://bootstrap.pypa.io/get-pip.py
+    become: true
+    args:
+      chdir: /tmp
+
+  - name: Run get-pip.py
+    command: python3 get-pip.py
+    become: true
+    args:
+      chdir: /tmp
+
+  - name: Remove get-pip.py
+    command: rm /tmp/get-pip.py
+    become: true
+
+  - name:  Docker Module for Python
+    pip:
+      name: docker
+  # Configure and Restart Nginx
+    
+  # Install & Configure Nginx
+  - name: Install nginx
+    apt:
+      name: nginx
+      state: present
+  - name: Start and enable Nginx
+    service:
+      name: nginx
+      state: started
+      enabled: true
+  - name: Create sites-enabled directory
+    file:
+      path: /etc/nginx/sites-enabled
+      state: directory
+  - name: Create site configuration
+    template:
+      src: myconf
+      dest: /etc/nginx/sites-enabled/myconf
+      owner: root
+      group: root
+      mode: 0644
+  - name: Restart Nginx
+    service:
+      name: nginx
+      state: restarted
+
+  - name: Install docker-compose
+    pip:
+      name: docker-compose
+      state: present
+    tags:
+      - docker-compose
+
+  - name: Create a directory for Kong
+    file:
+      path: /opt/kong
+      state: directory
+    tags:
+      - kong
+
+  - name: Create a docker-compose file for Kong
+    copy:
+      src: docker-compose.yml
+      dest: /opt/kong/docker-compose.yml
+    tags:
+      - kong
+
+  - name: Run Kong using docker-compose
+    command: /usr/bin/docker compose -f /opt/kong/docker-compose.yml up -d
+    args:
+      chdir: /opt/kong
+    tags:
+      - kong

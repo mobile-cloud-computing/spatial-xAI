@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>XAI Microservices Interface</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        /* Custom styles */
+
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .arrow {
+            cursor: pointer;
+        }
+
+        .loader {
+            border: 16px solid #f3f3f3;
+            border-top: 16px solid #3498db;
+            border-radius: 50%;
+            width: 120px;
+            height: 120px;
+            animation: spin 2s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1 class="text-center">XAI Microservices Interface</h1>
+        <h3>Welcome, <span id="userRole"></span>!</h3>
+
+        <h2>
+            <span class="arrow" onclick="toggleSection('occlusionForm')">&#x25B6;</span>
+            xAI Explanations
+        </h2>
+
+        <form id="occlusionForm" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="occlusionImageFile">Image File:</label>
+                <input type="file" id="occlusionImageFile" name="file" accept=".jpg,.jpeg,.png" required>
+            </div>
+            <div class="form-group">
+                <label for="occlusionClassLabel">Class Label:</label>
+                <select id="occlusionClassLabel" required class="form-control">
+                    <option value="cardboard">Cardboard</option>
+                    <option value="glass">Glass</option>
+                    <option value="metal">Metal</option>
+                    <option value="paper">Paper</option>
+                    <option value="plastic">Plastic</option>
+                    <option value="trash">Trash</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Explain</button>
+            <br><br>
+            <div id="LoadingExplanations"></div>
+
+            <div class="section" id="User_shappredictionResult">
+                <!-- <h3>Prediction Result</h3> -->
+                <div id="shappredictionResult"></div>
+            </div>
+
+            <div class="section" id="User_limeImageResult">
+                <!-- <h3>LIME Image Result</h3> -->
+                <div id="limeImageResult"></div>
+            </div>
+
+            <div class="section" id="User_limetop_T">
+                <!-- <h3>Top Labels</h3> -->
+                <div id="limetop_T" class="section-result"></div>
+            </div>
+
+            <div class="section" id="User_top_T_plot_base64">
+                <!-- <h3>Top Predicted Labels Plot</h3> -->
+                <div id="top_T_plot_base64"></div>
+            </div>
+
+            <div class="section" id="Dev_segment_overlay_base64">
+                <!-- <h3>LIME Segmentation</h3> -->
+                <div id="segment_overlay_base64"></div>
+            </div>
+
+            <div class="section" id="Dev_bar_plot_base64">
+                <!-- <h3>LIME Super Pixel Plot</h3> -->
+                <div id="bar_plot_base64"></div>
+            </div>
+
+            <div class="section" id="User_shapImageResult">
+                <!-- <h3>SHAP Image Result</h3> -->
+                <div id="shapImageResult"></div>
+            </div>
+
+            <div class="section" id="Dev_shap_S_plot_base64">
+                <!-- <h3>SHAP Summary Plot</h3> -->
+                <div id="shap_S_plot_base64"></div>
+            </div>
+
+            <div class="section" id="User_occlusionImageResult">
+                <!-- <h3>Occlusion Heatmap</h3> -->
+                <div id="occlusionImageResult"></div>
+            </div>
+        </form>
+
+    </div>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script>
+        // Occlusion Sensitivity Explanation
+        const occlusionForm = document.getElementById('occlusionForm');
+        const LoadingExplanations = document.getElementById('LoadingExplanations');
+        const occlusionImageFileInput = document.getElementById('occlusionImageFile');
+        const occlusionClassLabel = document.getElementById('occlusionClassLabel');
+        const occlusionExplanation = document.getElementById('occlusionExplanation');
+        const occlusionImageResult = document.getElementById('occlusionImageResult');
+
+        // SHAP Explanation
+        const shapImageFileInput = document.getElementById('shapImageFile');
+        const shapExplanation = document.getElementById('shapExplanation');
+        const shapImageResult = document.getElementById('shapImageResult');
+        const shap_S_plot_base64 = document.getElementById('shap_S_plot_base64');
+        const shappredictionResult = document.getElementById('shappredictionResult');
+
+        // LIME Explanation
+        const limeImageFileInput = document.getElementById('limeImageFile');
+        const limeExplanation = document.getElementById('limeExplanation');
+        const limetop_T = document.getElementById('limetop_T');
+        const top_T_plot_base64 = document.getElementById('top_T_plot_base64');
+        const limesegments = document.getElementById('limesegments');
+        const limeImageResult = document.getElementById('limeImageResult');
+        const bar_plot_base64 = document.getElementById('bar_plot_base64');
+        const segment_overlay_base64 = document.getElementById('segment_overlay_base64');
+
+
+
+        occlusionForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData();
+            formData.append('file', occlusionImageFileInput.files[0]);
+
+            const selectedLabel = occlusionClassLabel.value;
+
+            const queryParams = new URLSearchParams();
+            queryParams.append('imagetype', selectedLabel);
+
+            const queryString = queryParams.toString();
+
+            // Display the loading spinner
+            LoadingExplanations.innerHTML = '<div class="loader"></div>';
+
+            const response = await fetch(`/explain_all/image?${queryString}`, {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+            LoadingExplanations.innerHTML = '';
+
+            // Occlusion Sensitivity Explanation
+            // occlusionExplanation.innerHTML =  `<b> Explanation :</b>  ${result.Occexplanation}`
+
+            const Occ_dataURL = result.Occlimage_base64;
+
+            // Create an <img> element for the image
+            const image = document.createElement('img');
+            image.src = `data:image/jpeg;base64,${Occ_dataURL}`;
+            occlusionImageResult.innerHTML = '';
+            occlusionImageResult.appendChild(image);
+
+
+            // SHAP Explanation
+
+            shappredictionResult.innerHTML = '<b> Prediction : </b>' + result.prediction[0] + ',<b>  Probability : </b>' + result.prediction[1];
+            // shapExplanation.innerHTML =  `<b> Explanation :</b>  ${result.Shapexplanation}`
+            const shap_dataURL = result.shap_V_plot_base64;
+            const shap_S__base64 = result.shap_S_plot_base64;
+            console.log("shap_S__base64");
+            console.log(shap_S__base64);
+
+            // Create an <img> element for the shap_V image
+            const image2 = document.createElement('img');
+            image2.src = `data:image/jpeg;base64,${shap_dataURL}`;
+            shapImageResult.innerHTML = '';
+            shapImageResult.appendChild(image2);
+
+            // Create an <img> element for the  shap_S image
+            const image3 = document.createElement('img');
+            image3.src = `data:image/jpeg;base64,${shap_S__base64}`;
+            shap_S_plot_base64.innerHTML = '';
+            shap_S_plot_base64.appendChild(image3);
+
+
+            // LIME Explanation
+            // const lime_explanation = result.lime_explanation;
+            const top_T = result.top_T;
+            const top_T_plot = result.top_T_plot_base64;
+            // const segments = result.segments;
+            const Lime_dataURL = result.Lime_image_base64;
+            const bar_plot = result.bar_plot_base64;
+            const segment_overlay = result.segment_overlay_base64;
+
+
+            // Display explanations
+            // limeExplanation.innerHTML = `<b> Explanation :</b>  ${lime_explanation}`;
+
+            // Display segments
+            // limesegments.innerHTML = `<b>Segments :</b>  ${segments}`;
+
+            // Display top_T
+            limetop_T.innerHTML = `<b>Top Lables :</b>  ${top_T}`;
+
+
+            // Create an <img> element for the image
+            const image4 = document.createElement('img');
+            image4.src = `data:image/jpeg;base64,${Lime_dataURL}`;
+            limeImageResult.innerHTML = '';
+            limeImageResult.appendChild(image4);
+
+            // Create an <img> element for the segment_overlay_base64
+            const image5 = document.createElement('img');
+            image5.src = `data:image/png;base64,${segment_overlay}`;
+            segment_overlay_base64.innerHTML = '';
+            segment_overlay_base64.appendChild(image5);
+
+            // // Create an <img> element for the bar_plot_base64
+            const image6 = document.createElement('img');
+            image6.src = `data:image/png;base64,${bar_plot}`;
+            bar_plot_base64.innerHTML = '';
+            bar_plot_base64.appendChild(image6);
+
+            // Create an <img> element for the top_T_plot_base64
+            const image7 = document.createElement('img');
+            image7.src = `data:image/png;base64,${top_T_plot}`;
+            top_T_plot_base64.innerHTML = '';
+            top_T_plot_base64.appendChild(image7);
+
+
+        });
+
+        function toggleSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            const arrow = section.previousElementSibling.firstChild;
+
+            if (section.classList.contains('hidden')) {
+                section.classList.remove('hidden');
+                arrow.innerHTML = '&#x25BC;';
+            } else {
+                section.classList.add('hidden');
+                arrow.innerHTML = '&#x25B6;';
+            }
+        }
+            // Set the userRole in the UI
+        const userRoleElement = document.getElementById('userRole');
+        const userRole = 'business'; // Replace with the user's role
+        userRoleElement.textContent = userRole;
+      
+
+        // Define the allowed roles for each section
+        const allowedRoles = {
+            User_shappredictionResult: ['user', 'developer', 'auditor', 'business'],  // Prediction & Probability
+            User_limeImageResult: ['user', 'developer', 'auditor'],                   // Lime Image
+            User_limetop_T: ['user', 'developer', 'auditor', 'business'],             // Top Lables array
+            User_top_T_plot_base64: ['user', 'developer', 'auditor', 'business'],     // Top Predicted Labels plot
+            Dev_segment_overlay_base64: ['developer', 'auditor'],                     // Lime Segmentation of image
+            Dev_bar_plot_base64: ['developer', 'auditor'],                            // Lime Segmentation super pixel plot
+            User_shapImageResult: ['user', 'developer', 'auditor', 'business'],       // Shap Image
+            Dev_shap_S_plot_base64: ['developer', 'auditor'],                         // **Need to add Shap Summary Image** //
+            User_occlusionImageResult: ['user', 'developer', 'auditor', 'business']   // Occlusion heat image
+        };
+
+        // Function to check if a role is allowed for a section
+        function isRoleAllowed(sectionId, role) {
+            const allowed = allowedRoles[sectionId];
+            return allowed && allowed.includes(role);
+        }
+
+        // Function to hide sections based on user role
+        function hideSectionsBasedOnRole(role) {
+            const sections = document.getElementsByClassName('section');
+            for (let i = 0; i < sections.length; i++) {
+                const section = sections[i];
+                const sectionId = section.getAttribute('id');
+                if (!isRoleAllowed(sectionId, role)) {
+                    section.classList.add('hidden');
+                }
+            }
+        }
+
+        // Hide sections based on user role
+        hideSectionsBasedOnRole(userRole);
+
+      
+
+    </script>
+</body>
+
+</html>
