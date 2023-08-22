@@ -52,7 +52,7 @@ def get_ClassName(var):
     return result1
     
 def load_image_by_name(imageName: str):
-    basePath = "dataset-resized\\"
+    basePath = "dataset-resized/"
     img_path = basePath + imageName
     img = load_img(img_path, target_size=(300, 300))
     img = img_to_array(img, dtype=np.uint8)
@@ -81,7 +81,7 @@ class ModelExplainerInterface():
     #     return imgs, names
 
     def get_class_from_name(self, image_name: str):
-        label_name = image_name.split('\\')[0]
+        label_name = image_name.split('/')[0]
         label_class = list(labels.keys())[list(labels.values()).index(label_name)]
         return label_name, label_class
 
@@ -122,10 +122,20 @@ def predict(image: Image.Image):
     response.append(prob)
     return response
 
+
+
+# def read_imagefile(file) -> Image.Image:
+#     try:
+#         image = Image.open(io.BytesIO(file))
+#     except UnidentifiedImageError:
+#         print("UnidentifiedImageError: Could not identify the image format.")
+#     except Exception as e:
+#         print(f"An error occurred: {e}")
+#     return image
+
 def read_imagefile(file) -> Image.Image:
     image = Image.open(BytesIO(file))
     return image
-
 ########################### READ MODEL #################################
 #def read_model(file) -> h5py.File:
 #    mymodel = h5py.File(BytesIO(file))
@@ -136,7 +146,7 @@ from lime import lime_image
 ##from here added for LIME
 def explain_lime(image: Image.Image):
     explainer = lime_image.LimeImageExplainer()
-
+    pred = predict(image)
     # Preprocess the input image
     image = np.asarray(image.resize((300, 300)))[..., :3]
     image = image / 127.5 - 1.0
@@ -212,7 +222,7 @@ def explain_lime(image: Image.Image):
     top_T_plot_image = Image.open('top_T.png')
 
    
-    return NumPy, top_T, top_T_plot_image, lime_explanation, segments, bar_plot_image, segment_overlay_array
+    return NumPy, top_T, top_T_plot_image, lime_explanation, segments, bar_plot_image, segment_overlay_array,pred
   
 
 class ShapModelExplainer(ModelExplainerInterface):
