@@ -208,10 +208,14 @@ def explain_lime(image: Image.Image):
         
    # Prepare data for plotting
     labels = [str(label) for label in explanation.top_labels]
+  
+    top_labels_indices = explanation.top_labels
+    top_labels_names = [class_names[idx] for idx in top_labels_indices]
+
     scores = [score for score in range(1, len(explanation.top_labels) + 1)]
 
     # Plot the bar plot for top labels
-    plt.barh(labels, scores)
+    plt.barh(top_labels_names, scores)
     plt.xlabel('Score')
     plt.ylabel('Label')
     plt.title('Top Predicted Labels')
