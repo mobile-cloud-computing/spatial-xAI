@@ -4,8 +4,8 @@ from fastapi.openapi.utils import get_openapi
 import json
 from aiofile import async_open
 from fastapi.openapi.utils import get_openapi
-from fastapi import FastAPI, File, UploadFile,Depends, Form
-from application import predict, read_imagefile, explain_lime#,read_model
+from fastapi import FastAPI, File, UploadFile,Depends, Form, Body
+from application import predict, read_imagefile, explain_lime, load_model#,read_model 
 from application import ShapModelExplainer
 from application import OcclusionSensitityModelExplainer
 from application import get_ClassName
@@ -119,7 +119,6 @@ def view_image2():
 
 
 
-
 @app.post("/predict/image")
 async def predict_api(file: UploadFile = File(...)):
     print("POST api is running after asyncdef")
@@ -129,42 +128,37 @@ async def predict_api(file: UploadFile = File(...)):
     image = read_imagefile(await file.read())
     prediction = predict(image)
     return prediction
-# app.mount("/", StaticFiles(directory="."))
 
-# @app.post("/explain_lime/image") 
-# async def explain_api(file: UploadFile = File(...)):
-#     extension = file.filename.split(".")[-1] in ("jpg", "jpeg", "png")
-#     if not extension:
-#         return "Image must be jpg or png format!"
-#     # image = read_imagefile(await file.read())
-#     # explaination = explain_lime(image)
-#     # return explaination
 
-#     # image = read_imagefile(await file.read())
-#     # explanation_image = explain_lime(image)
-    
-#     # return {
-#     #     "image": explanation_image,
-#     #     "filename": file.filename
-#     # }
-    
-#     image = read_imagefile(await file.read())
-#     explanation_image = explain_lime(image)
-    
-#     return FileResponse(explanation_image, filename=file.filename, media_type="image/png")
-# app.mount("/", StaticFiles(directory="."))
 
 import base64
 import numpy as np
 import matplotlib.pyplot as plt
 
+
 @app.post("/explain_lime/image") 
-async def explain_api(file: UploadFile = File(...)):
+async def explain_api(file: UploadFile = File(...), mlModel:UploadFile = File(...), ImageFileBytes: bytes = File(...)):  
+    print(file.filename)
+    print(ImageFileBytes)
+
+
+    # saved_model_filename = "uploaded_model.h5"
+    # model_content = mlModel.file.read()
+
+    # # Save the uploaded model
+    # with open(saved_model_filename, "wb") as model_file:
+    #     model_file.write(model_content)
+
+    # # Load the saved model using the load_model function
+    # loaded_model = load_model(saved_model_filename)
+
+
+
     extension = file.filename.split(".")[-1] in ("jpg", "jpeg", "png")
     if not extension:
         return "Image must be jpg or png format!"
-    image = read_imagefile(await file.read())
-    explaination, top_T, top_T_plot_image,lime_explanation, segments, bar_plot_image, segment_overlay_array= explain_lime(image)
+    image = read_imagefile(ImageFileBytes)
+    explaination, top_T, top_T_plot_image,lime_explanation, segments, bar_plot_image, segment_overlay_array, pred= explain_lime(image) #loaded_model
 
 
     image_array = np.array(explaination, dtype=np.uint8)
@@ -174,11 +168,13 @@ async def explain_api(file: UploadFile = File(...)):
     image_buffer = io.BytesIO()
     image.save(image_buffer, format='JPEG')
     image_base64 = base64.b64encode(image_buffer.getvalue()).decode('utf-8')
+    image_buffer.close() 
 
     # Convert the bar plot image to a base64-encoded string
     bar_plot_buffer = io.BytesIO()
     bar_plot_image.save(bar_plot_buffer, format='PNG')
     bar_plot_base64 = base64.b64encode(bar_plot_buffer.getvalue()).decode('utf-8')
+    bar_plot_buffer.close() 
 
 
     # Convert segment overlay array to an image
@@ -189,28 +185,30 @@ async def explain_api(file: UploadFile = File(...)):
     segment_overlay_buffer = io.BytesIO()
     segment_overlay_image.save(segment_overlay_buffer, format='PNG')
     segment_overlay_base64 = base64.b64encode(segment_overlay_buffer.getvalue()).decode('utf-8')
+    segment_overlay_buffer.close() 
 
 
     # Convert the top labels plot image to a base64-encoded string
     top_T_plot_buffer = io.BytesIO()
     top_T_plot_image.save(top_T_plot_buffer, format='PNG')
     top_T_plot_base64 = base64.b64encode(top_T_plot_buffer.getvalue()).decode('utf-8')
+    top_T_plot_buffer.close() 
 
     print("TESTINGGGGGGGGG") 
 
-    return {"lime_explanation": lime_explanation, "top_T": top_T, "image_base64": image_base64, "segments": segments,
-    "bar_plot_base64": bar_plot_base64 ,"segment_overlay_base64": segment_overlay_base64, "top_T_plot_base64" : top_T_plot_base64}
+    return {"top_T": top_T, "image_base64": image_base64, "segments": segments,
+       "bar_plot_base64": bar_plot_base64 ,"segment_overlay_base64": segment_overlay_base64, "top_T_plot_base64" : top_T_plot_base64 ,"pred":pred}
 
 
 import sys
 import gzip
 @app.post("/explain_shap/image")
-async def explain_api(file: UploadFile = File(...)):
+async def explain_api(file: UploadFile = File(...), mlModel:UploadFile = File(...), ImageFileBytes: bytes = File(...)):
     extension = file.filename.split(".")[-1] in ("jpg", "jpeg", "png")
     filename = file.filename.split(".")[0]
     if not extension:
         return "Image must be jpg or png format!"
-    image = read_imagefile(await file.read())
+    image = read_imagefile(ImageFileBytes)
     explaination,shap_V_plot_image, prediction = ShapExplainer.explain_shap(image,filename)
     # shap_S_plot_image
    
@@ -226,36 +224,35 @@ async def explain_api(file: UploadFile = File(...)):
     # shap_S_plot_image.save(shap_S_plot_buffer, format='PNG')
     # shap_S_plot_base64 = base64.b64encode(shap_S_plot_buffer.getvalue()).decode('utf-8')
 
-    response_data = {
+#     response_data = {
    
-    "shap_V_plot_base64": shap_V_plot_base64,
-    "prediction": prediction
-}
-# Assuming you have the JSON response data in a dictionary called 'response_data'
-    json_response = json.dumps(response_data, ensure_ascii=False)  # Convert dictionary to JSON string
+#     "shap_V_plot_base64": shap_V_plot_base64,
+#     "prediction": prediction
+# }
+# # Assuming you have the JSON response data in a dictionary called 'response_data'
+#     json_response = json.dumps(response_data, ensure_ascii=False)  # Convert dictionary to JSON string
 
-# Calculate the size of the JSON response in bytes
-    response_size_in_bytes = sys.getsizeof(json_response)
+# # Calculate the size of the JSON response in bytes
+#     response_size_in_bytes = sys.getsizeof(json_response)
 
-# Print the size in bytes
-    print(f"Size of the JSON response: {response_size_in_bytes} bytes")
+# # Print the size in bytes
+#     print(f"Size of the JSON response: {response_size_in_bytes} bytes")
 
-    # Compress the JSON response using gzip
-    compressed_response = gzip.compress(json_response.encode('utf-8'))
+#     # Compress the JSON response using gzip
+#     compressed_response = gzip.compress(json_response.encode('utf-8'))
 
-# Calculate the size of the compressed JSON response in bytes
-    compressed_response_size_in_bytes = sys.getsizeof(compressed_response)
-    print(f"Size of the compressed JSON response: {compressed_response_size_in_bytes} bytes")
+# # Calculate the size of the compressed JSON response in bytes
+#     compressed_response_size_in_bytes = sys.getsizeof(compressed_response)
+#     print(f"Size of the compressed JSON response: {compressed_response_size_in_bytes} bytes")
 
-    return  {"explaination": explaination,  "shap_V_plot_base64": shap_V_plot_base64, 
-    # "shap_S_plot_base64": shap_S_plot_base64,
-    "prediction":prediction }
+    return  { "shap_V_plot_base64": shap_V_plot_base64}
+    # "explaination": explaination, "shap_S_plot_base64": shap_S_plot_base64, "prediction":prediction }
 # app.mount("/", StaticFiles(directory="."))
 
 class ClassLabel(BaseModel):
      imagetype: str
 @app.post("/explain_occlusion/image")
-async def explain_api(file: UploadFile = File(...), base:ClassLabel = Depends()):
+async def explain_api(file: UploadFile = File(...), base:ClassLabel = Depends(),mlModel:UploadFile = File(...), ImageFileBytes: bytes = File(...)):
      extension = file.filename.split(".")[-1] in ("jpg", "jpeg", "png")
      input = base.dict()
      var = input['imagetype']
@@ -265,7 +262,7 @@ async def explain_api(file: UploadFile = File(...), base:ClassLabel = Depends())
          return "Image must be jpg or png format!"
      label_number = get_ClassName(var)
 #     var1 = 4
-     image = read_imagefile(await file.read())
+     image =read_imagefile(ImageFileBytes)
      explanation = OcclusionExplainer.explain_occlusion(image,classNum)
 
      image_array = np.array(explanation, dtype=np.uint8)
@@ -274,7 +271,9 @@ async def explain_api(file: UploadFile = File(...), base:ClassLabel = Depends())
     # Convert the image to a base64-encoded string
      image_buffer = io.BytesIO()
      image.save(image_buffer, format='JPEG')
-     image_base64 = base64.b64encode(image_buffer.getvalue()).decode('utf-8')
+     Occ_image_base64 = base64.b64encode(image_buffer.getvalue()).decode('utf-8')
+     
+     image_buffer.close() 
 
     #  image2 = Image.fromarray(explanation.astype('uint8'))
     #  image2 = image2.resize((300, 300))  # Resize if needed
@@ -285,7 +284,7 @@ async def explain_api(file: UploadFile = File(...), base:ClassLabel = Depends())
 #      image_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
 
 
-     return {"explanation": explanation, "image_base64": image_base64} 
+     return {"Occ_image_base64": Occ_image_base64} 
     #  , image_base64
 
 app.mount("/", StaticFiles(directory="."))
@@ -297,4 +296,4 @@ with open('openapi.json', 'w') as f:
   json.dump(app.openapi(), f)
 
 if __name__ == "__main__":
-    uvicorn.run(app, port=8080)
+    uvicorn.run(app,host="0.0.0.0", port=8080)
