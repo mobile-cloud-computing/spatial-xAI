@@ -18,6 +18,12 @@ ShapExplainer = ShapModelExplainer()
 OcclusionExplainer = OcclusionSensitityModelExplainer()
 ####################FOR REQUEST BODY####################
 from pydantic import BaseModel
+import base64
+import numpy as np
+import matplotlib.pyplot as plt
+import sys
+import gzip
+
 description = """
 xAI Microservices APIs helps you to understand the internal model structure and provide you explanation.
 ## Image Class Prediction Service
@@ -131,9 +137,6 @@ async def predict_api(file: UploadFile = File(...)):
 
 
 
-import base64
-import numpy as np
-import matplotlib.pyplot as plt
 
 
 @app.post("/explain_lime/image") 
@@ -158,15 +161,20 @@ async def explain_api(file: UploadFile = File(...), mlModel:UploadFile = File(..
     if not extension:
         return "Image must be jpg or png format!"
     image = read_imagefile(ImageFileBytes)
-    explaination, top_T, top_T_plot_image,lime_explanation, segments, bar_plot_image, segment_overlay_array, pred= explain_lime(image) #loaded_model
+    explaination, top_T, top_T_plot_image,lime_explanation, segments, bar_plot_image, segment_overlay_array, pred,lime,segment__img= explain_lime(image) #loaded_model
 
 
     image_array = np.array(explaination, dtype=np.uint8)
     image = Image.fromarray(image_array)
 
     # Convert the image to a base64-encoded string
+    # image_buffer = io.BytesIO()
+    # image.save(image_buffer, format='JPEG')
+    # image_base64 = base64.b64encode(image_buffer.getvalue()).decode('utf-8')
+    # image_buffer.close() 
+
     image_buffer = io.BytesIO()
-    image.save(image_buffer, format='JPEG')
+    lime.save(image_buffer, format='PNG')
     image_base64 = base64.b64encode(image_buffer.getvalue()).decode('utf-8')
     image_buffer.close() 
 
@@ -182,8 +190,14 @@ async def explain_api(file: UploadFile = File(...), mlModel:UploadFile = File(..
     segment_overlay_image = Image.fromarray(segment_overlay_image_array)
 
     # Convert the segment overlay image to a base64-encoded string
+    # segment_overlay_buffer = io.BytesIO()
+    # segment_overlay_image.save(segment_overlay_buffer, format='PNG')
+    # segment_overlay_base64 = base64.b64encode(segment_overlay_buffer.getvalue()).decode('utf-8')
+    # segment_overlay_buffer.close() 
+
+    
     segment_overlay_buffer = io.BytesIO()
-    segment_overlay_image.save(segment_overlay_buffer, format='PNG')
+    segment__img.save(segment_overlay_buffer, format='PNG')
     segment_overlay_base64 = base64.b64encode(segment_overlay_buffer.getvalue()).decode('utf-8')
     segment_overlay_buffer.close() 
 
@@ -200,8 +214,6 @@ async def explain_api(file: UploadFile = File(...), mlModel:UploadFile = File(..
        "bar_plot_base64": bar_plot_base64 ,"segment_overlay_base64": segment_overlay_base64, "top_T_plot_base64" : top_T_plot_base64 ,"pred":pred}
 
 
-import sys
-import gzip
 @app.post("/explain_shap/image")
 async def explain_api(file: UploadFile = File(...), mlModel:UploadFile = File(...), ImageFileBytes: bytes = File(...)):
     extension = file.filename.split(".")[-1] in ("jpg", "jpeg", "png")
@@ -263,17 +275,22 @@ async def explain_api(file: UploadFile = File(...), base:ClassLabel = Depends(),
      label_number = get_ClassName(var)
 #     var1 = 4
      image =read_imagefile(ImageFileBytes)
-     explanation = OcclusionExplainer.explain_occlusion(image,classNum)
+     explanation, Occlus_Image = OcclusionExplainer.explain_occlusion(image,classNum)
 
      image_array = np.array(explanation, dtype=np.uint8)
      image = Image.fromarray(image_array)
 
     # Convert the image to a base64-encoded string
-     image_buffer = io.BytesIO()
-     image.save(image_buffer, format='JPEG')
-     Occ_image_base64 = base64.b64encode(image_buffer.getvalue()).decode('utf-8')
+    #  image_buffer = io.BytesIO()
+    #  image.save(image_buffer, format='JPEG')
+    #  Occ_image_base64 = base64.b64encode(image_buffer.getvalue()).decode('utf-8')
      
-     image_buffer.close() 
+    #  image_buffer.close() 
+
+     
+     Occ_buffer = io.BytesIO()
+     Occlus_Image.save(Occ_buffer, format='PNG')
+     Occ_image_base64 = base64.b64encode(Occ_buffer.getvalue()).decode('utf-8')
 
     #  image2 = Image.fromarray(explanation.astype('uint8'))
     #  image2 = image2.resize((300, 300))  # Resize if needed
