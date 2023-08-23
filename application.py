@@ -21,6 +21,9 @@ from tf_explain.callbacks.occlusion_sensitivity import OcclusionSensitivity
 import cv2
 from skimage.segmentation import mark_boundaries
 import re
+from lime import lime_image
+import matplotlib.image as mpimg
+
 
 dir_path = 'dataset-resized/'
 test=ImageDataGenerator(rescale=1/255,
@@ -142,7 +145,7 @@ def read_imagefile(file) -> Image.Image:
 #    print(type(mymodel))
 #    return mymodel
 #########################################################################
-from lime import lime_image
+
 ##from here added for LIME
 def explain_lime(image: Image.Image):
     explainer = lime_image.LimeImageExplainer()
@@ -153,10 +156,10 @@ def explain_lime(image: Image.Image):
 
     # Generate explanations
     explanation = explainer.explain_instance(image, model.predict,
-                                             top_labels=5, hide_color=0, num_samples=1000)
+                                             top_labels=6, hide_color=0, num_samples=1000)
     # Retrieve and print the top predicted labels
     # print("Top labels " + str(explanation.top_labels))
-    top_T = str(explanation.top_labels)
+    # top_T = str(explanation.top_labels)
 
 
     # Retrieve the Lime explanation dictionary
@@ -167,7 +170,7 @@ def explain_lime(image: Image.Image):
     segments = str(explanation.segments)
     # print("Segments: " + str(segments))
 
-    temp_2, mask_2 = explanation.get_image_and_mask(explanation.top_labels[0], positive_only=True, num_features=10,
+    temp_2, mask_2 = explanation.get_image_and_mask(explanation.top_labels[0], positive_only=False, num_features=10,
                                                     hide_rest=False)
     # print("Shape of temp_2: " + str(temp_2.shape))
     # print("Shape of mask_2: " + str(mask_2.shape))
@@ -179,6 +182,16 @@ def explain_lime(image: Image.Image):
     # Convert the masked image to a NumPy array for replotting
     encodedNumpyData = temp_2*255 
     NumPy= encodedNumpyData.tolist()  
+
+    fig, ax1 = plt.subplots(1, 1, figsize=(7, 7))
+    ax1.set_title('Lime Explanation')  # Set the title for ax1
+    ax1.imshow(mark_boundaries(temp_2, mask_2))
+    ax1.axis('off')  # Turn off axis labels and ticks
+
+    plt.savefig('lime.png')  # Save the plot as an image
+    plt.close()
+
+    lime = Image.open('lime.png')
 
     # Plot the bar plot for segment importance
     lime_explanation2 = explanation.local_exp
@@ -202,15 +215,37 @@ def explain_lime(image: Image.Image):
     segments3 = explanation.segments
     segment_overlay = mark_boundaries(np.array(image), segments3)
     # print("Shape of segment_overlay: " + str(segment_overlay.shape))
-    segment_overlay_array = segment_overlay*255 
-    segment_overlay_array= segment_overlay_array.tolist()  
+    # segment_overlay_array = segment_overlay*255 
+    # segment_overlay_array= segment_overlay_array.tolist()  
+
+#/////////////////////////////
+
+
+    segment_overlay_array = (segment_overlay * 255).astype(np.uint8)
+
+# Convert the overlay array to an Image object
+    segment_overlay_img = Image.fromarray(segment_overlay_array)
+
+# Display the overlay image
+    plt.figure(figsize=(6, 6))
+    imgplot = plt.imshow(segment_overlay_img)
+    plt.axis('off')
+    plt.title('Segmentation Overlay')
+    plt.savefig('Segmentation_Overlay.png')  # Save the plot as an image
+    plt.close()
+
+# Save the overlay image
+    segment__img = Image.open('Segmentation_Overlay.png')
+
+
 
         
    # Prepare data for plotting
     labels = [str(label) for label in explanation.top_labels]
-  
+
     top_labels_indices = explanation.top_labels
     top_labels_names = [class_names[idx] for idx in top_labels_indices]
+
 
     scores = [score for score in range(1, len(explanation.top_labels) + 1)]
 
@@ -224,9 +259,34 @@ def explain_lime(image: Image.Image):
     plt.close()
 
     top_T_plot_image = Image.open('top_T.png')
+    top_T = top_labels_names
+
+    # classes2=[]
+    # prob2=[]
+    # print("\n-------------------Individual Probability--------------------------------\n")
+
+    # for i,j in enumerate (pred[0],0):
+    #     print(top_T[i].upper(),':',round(j*100,2),'%')
+    #     classes2.append(top_T[i])
+    #     prob2.append(round(j*100,2))
+    
+   
+    # index2 = np.arange(len(classes2))
+    # plt.bar(index2, prob2)
+    # lt.xlabel('Labels', fontsize=12)
+    # plt.ylabel('Probability', fontsize=12)
+    # plt.xticks(index2, classes2, fontsize=12, rotation=20)
+    # plt.title('Probability for loaded image')
+    # plt.savefig('top_T.png')  # Save the plot as an image
+    # plt.close()
+
+    # top_T_plot_image = Image.open('top_T.png')
+    
+
+    
 
    
-    return NumPy, top_T, top_T_plot_image, lime_explanation, segments, bar_plot_image, segment_overlay_array,pred
+    return NumPy, top_T, top_T_plot_image, lime_explanation, segments, bar_plot_image, segment_overlay_array,pred ,lime,segment__img
   
 
 class ShapModelExplainer(ModelExplainerInterface):
@@ -310,6 +370,7 @@ class ShapModelExplainer(ModelExplainerInterface):
         #plt.title('Shap Explanation')
         plt.show()
 
+
 class OcclusionSensitityModelExplainer(ModelExplainerInterface):
 
      def explain_occlusion(self,image: Image.Image,label):
@@ -336,7 +397,17 @@ class OcclusionSensitityModelExplainer(ModelExplainerInterface):
             # Convert the grid to a numpy array
         #  grid_array = np.asarray(grid, dtype=np.uint8)
 
-         return encodedNumpyData
+         img = mpimg.imread(explained_img_name)
+         plt.figure(figsize = (6,6))
+         imgplot = plt.imshow(img)
+         plt.axis('off')
+         plt.title('Occlusion Sensitivity')
+         plt.savefig('Occlus_Image.png')  # Save the plot as an image
+         plt.close()
+
+         Occlus_Image = Image.open('Occlus_Image.png')
+
+         return encodedNumpyData, Occlus_Image
 #
      def plot_explanations(self, img_name):
          img = plt.imread(img_name)
