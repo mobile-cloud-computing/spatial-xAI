@@ -9,6 +9,7 @@ from application import predict, read_imagefile, explain_lime, load_model#,read_
 from application import ShapModelExplainer
 from application import OcclusionSensitityModelExplainer
 from application import get_ClassName
+from application import explain_occ_sensitivity_raw
 from PIL import Image
 import os
 from fastapi.staticfiles import StaticFiles
@@ -161,7 +162,7 @@ async def explain_api(file: UploadFile = File(...), mlModel:UploadFile = File(..
     if not extension:
         return "Image must be jpg or png format!"
     image = read_imagefile(ImageFileBytes)
-    explaination, top_T, top_T_plot_image,lime_explanation, segments, bar_plot_image, segment_overlay_array, pred,lime,segment__img= explain_lime(image) #loaded_model
+    explaination, top_T, top_T_plot_image, segments, bar_plot_image, segment_overlay_array, pred,lime,segment__img,top_labels_names,scores= explain_lime(image) #loaded_model ,bar_plot_segments,bar_plot_importance
 
 
     image_array = np.array(explaination, dtype=np.uint8)
@@ -210,8 +211,8 @@ async def explain_api(file: UploadFile = File(...), mlModel:UploadFile = File(..
 
     print("TESTINGGGGGGGGG") 
 
-    return {"top_T": top_T, "image_base64": image_base64, "segments": segments,
-       "bar_plot_base64": bar_plot_base64 ,"segment_overlay_base64": segment_overlay_base64, "top_T_plot_base64" : top_T_plot_base64 ,"pred":pred}
+    return {"top_T": top_T, "image_base64": image_base64, "segments": segments,"bar_plot_base64": bar_plot_base64 ,"segment_overlay_base64": segment_overlay_base64, "top_T_plot_base64" : top_T_plot_base64 ,"pred":pred,"top_labels_names":top_labels_names,"scores":scores}
+    #    ,"bar_plot_segments":bar_plot_segments,"bar_plot_importance":bar_plot_importance}
 
 
 @app.post("/explain_shap/image")
@@ -290,7 +291,7 @@ async def explain_api(file: UploadFile = File(...), base:ClassLabel = Depends(),
      
      Occ_buffer = io.BytesIO()
      Occlus_Image.save(Occ_buffer, format='PNG')
-     Occ_image_base64 = base64.b64encode(Occ_buffer.getvalue()).decode('utf-8')
+     Occ_GradCam_base64 = base64.b64encode(Occ_buffer.getvalue()).decode('utf-8')
 
     #  image2 = Image.fromarray(explanation.astype('uint8'))
     #  image2 = image2.resize((300, 300))  # Resize if needed
@@ -300,8 +301,22 @@ async def explain_api(file: UploadFile = File(...), base:ClassLabel = Depends(),
 #      image2.save(buffer, format='JPEG')  # Save as PNG for lossless compression
 #      image_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
 
+     occluding_size = 50
+     occluding_pixel = 1
+     occluding_stride = 5
+     image = Image.open(io.BytesIO(ImageFileBytes))
+     image = image.resize((300, 300))
+        
 
-     return {"Occ_image_base64": Occ_image_base64} 
+     OCCE_plot_image = explain_occ_sensitivity_raw(occluding_size,occluding_pixel,occluding_stride,image)
+
+     
+     OCCE_plot_buffer = io.BytesIO()
+     OCCE_plot_image.save(OCCE_plot_buffer, format='PNG')
+     Occ_image_base64 = base64.b64encode(OCCE_plot_buffer.getvalue()).decode('utf-8')
+
+
+     return {"Occ_image_base64": Occ_image_base64,"Occ_GradCam_base64":Occ_GradCam_base64} 
     #  , image_base64
 
 app.mount("/", StaticFiles(directory="."))
@@ -313,4 +328,4 @@ with open('openapi.json', 'w') as f:
   json.dump(app.openapi(), f)
 
 if __name__ == "__main__":
-    uvicorn.run(app,host="0.0.0.0", port=8080)
+    uvicorn.run(app,host="0.0.0.0", port=8050)
