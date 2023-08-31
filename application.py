@@ -24,6 +24,11 @@ import re
 from lime import lime_image
 import matplotlib.image as mpimg
 
+from scipy.ndimage.interpolation import map_coordinates
+import math
+import seaborn as sns
+import os
+
 
 dir_path = 'dataset-resized/'
 test=ImageDataGenerator(rescale=1/255,
@@ -61,6 +66,8 @@ def load_image_by_name(imageName: str):
     img = img_to_array(img, dtype=np.uint8)
     img=np.array(img)/255.0
     return img
+
+   
 class ModelExplainerInterface():
     def load_image_by_image_name(self, image_name: str):
         img = load_image_by_name(image_name)
@@ -163,7 +170,7 @@ def explain_lime(image: Image.Image):
 
 
     # Retrieve the Lime explanation dictionary
-    lime_explanation = str(explanation.local_exp)
+    # lime_explanation = str(explanation.local_exp)
     # print("LIME explanation: " + str(lime_explanation))
 
     # Retrieve the segmentation map
@@ -183,33 +190,21 @@ def explain_lime(image: Image.Image):
     encodedNumpyData = temp_2*255 
     NumPy= encodedNumpyData.tolist()  
 
+    if os.path.exists('lime.png'):
+        os.remove('lime.png')
+
+
     fig, ax1 = plt.subplots(1, 1, figsize=(7, 7))
     ax1.set_title('Lime Explanation')  # Set the title for ax1
     ax1.imshow(mark_boundaries(temp_2, mask_2))
     ax1.axis('off')  # Turn off axis labels and ticks
-
+    # plt.show()
     plt.savefig('lime.png')  # Save the plot as an image
     plt.close()
 
     lime = Image.open('lime.png')
 
-    # Plot the bar plot for segment importance
-    lime_explanation2 = explanation.local_exp
-    segments2 = [seg_idx for seg_idx, _ in lime_explanation2[explanation.top_labels[0]]]
-    importance_values = [val for _, val in lime_explanation2[explanation.top_labels[0]]]
-
-    bar_plot_array = [segments2, importance_values]
-
-    # Convert bar plot array to an image
-    bar_plot_segments, bar_plot_importance = bar_plot_array
-    plt.bar(bar_plot_segments, bar_plot_importance)
-    plt.xlabel('Segment')
-    plt.ylabel('Importance')
-    plt.title('Segment Importance')
-    plt.savefig('bar_plot.png')  # Save the plot as an image
-    plt.close()
-
-    bar_plot_image = Image.open('bar_plot.png')
+ 
 
     # Overlay the segmentation map on the input image
     segments3 = explanation.segments
@@ -225,20 +220,48 @@ def explain_lime(image: Image.Image):
 
 # Convert the overlay array to an Image object
     segment_overlay_img = Image.fromarray(segment_overlay_array)
-
+    
+    if os.path.exists('Segmentation_Overlay.png'):
+        os.remove('Segmentation_Overlay.png')
 # Display the overlay image
     plt.figure(figsize=(6, 6))
     imgplot = plt.imshow(segment_overlay_img)
     plt.axis('off')
     plt.title('Segmentation Overlay')
+    # plt.show()
     plt.savefig('Segmentation_Overlay.png')  # Save the plot as an image
     plt.close()
 
 # Save the overlay image
     segment__img = Image.open('Segmentation_Overlay.png')
 
+       # Plot the bar plot for segment importance
+    if os.path.exists('bar_plot.png'):
+        os.remove('bar_plot.png')
+    lime_explanation = explanation.local_exp
+    segments2 = [seg_idx for seg_idx, _ in lime_explanation[explanation.top_labels[0]]]
+    importance_values = [val for _, val in lime_explanation[explanation.top_labels[0]]]
 
+    segmentsL = list(segments2)
+    importance_valuesL = list(importance_values)
 
+    bar_plot_array = [segments2, importance_values]
+    
+  
+    # Convert bar plot array to an image
+    bar_plot_segments, bar_plot_importance = bar_plot_array
+    plt.bar(bar_plot_segments, bar_plot_importance, color='darkred')
+    plt.xlabel('Segment')
+    plt.ylabel('Importance')
+    plt.title('Segment Importance')
+    # plt.show()
+    # plt.imshow(bar_plot_segments, bar_plot_importance)
+    plt.savefig('bar_plot.png')  # Save the plot as an image
+    plt.close()
+
+    bar_plot_image = Image.open('bar_plot.png')
+
+ 
         
    # Prepare data for plotting
     labels = [str(label) for label in explanation.top_labels]
@@ -249,44 +272,27 @@ def explain_lime(image: Image.Image):
 
     scores = [score for score in range(1, len(explanation.top_labels) + 1)]
 
+    if os.path.exists('top_T.png'):
+        os.remove('top_T.png')
     # Plot the bar plot for top labels
     plt.barh(top_labels_names, scores)
     plt.xlabel('Score')
     plt.ylabel('Label')
     plt.title('Top Predicted Labels')
     plt.xticks(rotation=90)
+    # plt.show()
     plt.savefig('top_T.png')  # Save the plot as an image
     plt.close()
 
     top_T_plot_image = Image.open('top_T.png')
     top_T = top_labels_names
 
-    # classes2=[]
-    # prob2=[]
-    # print("\n-------------------Individual Probability--------------------------------\n")
-
-    # for i,j in enumerate (pred[0],0):
-    #     print(top_T[i].upper(),':',round(j*100,2),'%')
-    #     classes2.append(top_T[i])
-    #     prob2.append(round(j*100,2))
-    
-   
-    # index2 = np.arange(len(classes2))
-    # plt.bar(index2, prob2)
-    # lt.xlabel('Labels', fontsize=12)
-    # plt.ylabel('Probability', fontsize=12)
-    # plt.xticks(index2, classes2, fontsize=12, rotation=20)
-    # plt.title('Probability for loaded image')
-    # plt.savefig('top_T.png')  # Save the plot as an image
-    # plt.close()
-
-    # top_T_plot_image = Image.open('top_T.png')
-    
 
     
 
    
-    return NumPy, top_T, top_T_plot_image, lime_explanation, segments, bar_plot_image, segment_overlay_array,pred ,lime,segment__img
+    return NumPy, top_T, top_T_plot_image, segments, bar_plot_image, segment_overlay_array,pred ,lime,segment__img,top_labels_names,scores
+ 
   
 
 class ShapModelExplainer(ModelExplainerInterface):
@@ -343,6 +349,9 @@ class ShapModelExplainer(ModelExplainerInterface):
          # Show the actual/predicted class
         allaxes[0].set_title('Pred:  {}'.format(prob))
 
+        if os.path.exists('shap_V.png'):
+            os.remove('shap_V.png')
+
         for x in range(1, len(allaxes)-1):
             proba = p[0][x-1]
             if isinstance(prob, (float, int)):
@@ -396,12 +405,15 @@ class OcclusionSensitityModelExplainer(ModelExplainerInterface):
 
             # Convert the grid to a numpy array
         #  grid_array = np.asarray(grid, dtype=np.uint8)
+         if os.path.exists('Occlus_Image.png'):
+             os.remove('Occlus_Image.png')
 
          img = mpimg.imread(explained_img_name)
          plt.figure(figsize = (6,6))
          imgplot = plt.imshow(img)
          plt.axis('off')
-         plt.title('Occlusion Sensitivity')
+         plt.title('Grad Cam Heat Map')
+        #  plt.show()
          plt.savefig('Occlus_Image.png')  # Save the plot as an image
          plt.close()
 
@@ -414,6 +426,90 @@ class OcclusionSensitityModelExplainer(ModelExplainerInterface):
          plt.figure(figsize=(6, 6))
          plt.imshow(img)
          plt.axis('off')
+        #  plt.show()
          plt.title('Occlusion Sensitivity')
          plt.show()
+
+def explain_occ_sensitivity_raw(occluding_size, occluding_pixel, occluding_stride, image_name):
+    
+        img = img_to_array(image_name, dtype=np.uint8)
+        original_resized_image=np.array(img)/255.0
+    
+    # im = im.transpose((2, 0, 1))
+        plt.imshow(original_resized_image.squeeze())
+    
+        im = original_resized_image[np.newaxis, ...]
+    #print(im.shape)
+    
+        out = model.predict(im)
+    #print('predicted first')
+        # print(out)
+        out = out[0]
+        # print(out)
+
+    #print(out)
+    # Getting the index of the winning class:
+        m = np.max(np.array(out))
+
+        index_object = [i for i, j in enumerate(out) if j == m]
+    
+        height, width, _ = original_resized_image.shape
+
+        output_height = int(math.ceil((height - occluding_size) / occluding_stride + 1))
+        output_width = int(math.ceil((width - occluding_size) / occluding_stride + 1))
+        heatmap = np.zeros((output_height, output_width))
+        print(heatmap.shape)
+        for h in range(output_height):
+            for w in range(output_width):
+            # Occluder region:
+                h_start = h * occluding_stride
+                w_start = w * occluding_stride
+                h_end = min(height, h_start + occluding_size)
+                w_end = min(width, w_start + occluding_size)
+            # Getting the image copy, applying the occluding window and classifying it again:
+                input_image_original = np.copy(original_resized_image)
+                input_image_original[h_start:h_end, w_start:w_end] = occluding_pixel
+                im = input_image_original[np.newaxis, ...]
+            #plt.imshow(input_image_original.squeeze())
+            #plt.show()
+    
+            # im = im.transpose((2, 0, 1))
+                out = model.predict(im)
+            # print(out)
+                out = out[0]
+            #print('scanning position (%s, %s)' % (h, w))
+            # It's possible to evaluate the VGG-16 sensitivity to a specific object.
+            # To do so, you have to change the variable "index_object" by the index of
+            # the class of interest. The VGG-16 output indices can be found here:
+            # https://github.com/HoldenCaulfieldRye/caffe/blob/master/data/ilsvrc12/synset_words.txt
+                prob = (out[index_object])
+                heatmap[h, w] = 1 - prob
+            # print(prob)
+        f, (ax1, ax2) = plt.subplots(1,2)
+      # this line outputs images side-by-side   
+    # palet = sns.color_palette("Spectral", n_colors=15)
+    # palet.reverse()
+
+
+        new_dims = []
+        for original_length, new_length in zip(heatmap.shape, (300,300)):
+            new_dims.append(np.linspace(0, original_length-1, new_length))
+        
+        if os.path.exists('OCCE_plot_image.png'):
+             os.remove('OCCE_plot_image.png')
+
+        coords = np.meshgrid(*new_dims, indexing='ij')
+        extrapolated_heatmap = map_coordinates(heatmap, coords)
+        print(extrapolated_heatmap.shape)
+        sns.heatmap(heatmap, xticklabels=False, yticklabels=False, ax=ax1)
+        sns.heatmap(extrapolated_heatmap, xticklabels=False, yticklabels=False, ax=ax2)
+        plt.imshow(original_resized_image)
+        plt.title('Occlusion Sensitivity')
+        # plt.show()
+        plt.savefig('OCCE_plot_image.png')  # Save the plot as an image
+        plt.close()
+
+        OCCE_plot_image = Image.open('OCCE_plot_image.png')
+        # print('Object index is %s' % index_object)
+        return OCCE_plot_image
 
