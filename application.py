@@ -132,6 +132,31 @@ def predict(image: Image.Image):
     response.append(prob)
     return response
 
+def predictLabels(image: Image.Image):
+
+    print("predicting with class and prediction values...")
+    image = np.asarray(image.resize((300, 300)))[..., :3]
+    image = np.expand_dims(image, 0)
+    image = image/255.0
+    p = model.predict(image)
+    class_predictions = {}
+
+# Iterate through the predictions and map them to class names
+    for i in range(len(class_names)):
+        class_name = class_names[i]
+        prediction_value = p[0][i]  # Assuming p is a 2D array (batch_size, num_classes)
+        formatted_prediction = "{:.3f}".format(prediction_value)
+        class_predictions[class_name] = formatted_prediction
+
+# Now, class_predictions contains the class names as keys and their corresponding prediction values
+    
+
+    # Sort class_predictions by prediction values in descending order
+    sorted_predictions = {k: v for k, v in sorted(class_predictions.items(), key=lambda item: item[1], reverse=True)}
+    print("sorted_predictions",sorted_predictions)
+ 
+    return sorted_predictions
+
 
 
 # def read_imagefile(file) -> Image.Image:
@@ -157,6 +182,7 @@ def read_imagefile(file) -> Image.Image:
 def explain_lime(image: Image.Image):
     explainer = lime_image.LimeImageExplainer()
     pred = predict(image)
+    pred2 = predictLabels(image)
     # Preprocess the input image
     image = np.asarray(image.resize((300, 300)))[..., :3]
     image = image / 127.5 - 1.0
@@ -285,13 +311,17 @@ def explain_lime(image: Image.Image):
     plt.close()
 
     top_T_plot_image = Image.open('top_T.png')
-    top_T = top_labels_names
+    # top_T = top_labels_names
 
+    labelNames = list(pred2.keys())
+    scores2 = list(pred2.values())
+    scores2 = [float(score) for score in scores2]
 
-    
+ # To show the list of class names according to prediction
+    top_T = labelNames
 
    
-    return NumPy, top_T, top_T_plot_image, segments, bar_plot_image, segment_overlay_array,pred ,lime,segment__img,top_labels_names,scores
+    return NumPy, top_T, top_T_plot_image, segments, bar_plot_image, segment_overlay_array,pred ,lime,segment__img,labelNames,scores2
  
   
 
