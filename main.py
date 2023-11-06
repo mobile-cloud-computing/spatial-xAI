@@ -302,9 +302,9 @@ async def explain_api(file: UploadFile = File(...), base:ClassLabel = Depends(),
 #      image2.save(buffer, format='JPEG')  # Save as PNG for lossless compression
 #      image_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
 
-     occluding_size = 50
+     occluding_size = 100
      occluding_pixel = 1
-     occluding_stride = 5
+     occluding_stride = 10
      image = Image.open(io.BytesIO(ImageFileBytes))
      image = image.resize((300, 300))
         
