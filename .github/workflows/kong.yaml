@@ -1,0 +1,1999 @@
+_format_version: "1.1"
+services:
+- connect_timeout: 360000
+  enabled: true
+  host: 192.168.42.139
+  name: Enhanced_Interpretability_Service
+  path: /
+  port: 80
+  protocol: http
+  read_timeout: 360000
+  retries: 5
+  routes:
+  - https_redirect_status_code: 426
+    methods:
+    - POST
+    name: Enhanced_Interpretability-enhanced_interpretability_explain_post
+    path_handling: v0
+    paths:
+    - /enhanced/interpretability/explain$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - enhanced_interpretability
+  tags:
+  - TUD
+  write_timeout: 360000
+- connect_timeout: 360000
+  enabled: true
+  host: 192.168.42.139
+  name: Fairness_Microservice
+  path: /
+  port: 80
+  protocol: http
+  read_timeout: 360000
+  retries: 5
+  routes:
+  - https_redirect_status_code: 426
+    methods:
+    - POST
+    name: Fairness_Microservice-explain_fairness_file_post
+    path_handling: v0
+    paths:
+    - /explain_fairness/file$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - OAS3_import
+    - OAS3file_openapi.yaml
+  tags:
+  - OAS3_import
+  - OAS3file_openapi.yaml
+  write_timeout: 360000
+- connect_timeout: 360000
+  enabled: true
+  host: medical-analysis-service.apps.osc.fokus.fraunhofer.de
+  name: Medical_Analysis_Microservices
+  path: /
+  port: 443
+  protocol: https
+  read_timeout: 360000
+  retries: 5
+  routes:
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Medical_Analysis_Microservices-default_health_check_get
+    path_handling: v0
+    paths:
+    - /health_check$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - default
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Medical_Analysis_Microservices-ed_mi_detection_emergency_data_get
+    path_handling: v0
+    paths:
+    - /emergency_detection/mi_detection/emergency_data$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - emergency
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Medical_Analysis_Microservices-ed_mi_detection_emergency_data_id_get
+    path_handling: v0
+    paths:
+    - /emergency_detection/mi_detection/emergency_data/(?<data_id>\w+)$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - emergency
+    - ed_mi_detection_emergency_(data_id
+  - https_redirect_status_code: 426
+    methods:
+    - POST
+    name: Medical_Analysis_Microservices-ed_mi_detection_explain_post
+    path_handling: v0
+    paths:
+    - /emergency_detection/mi_detection/explain$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - emergency
+  - https_redirect_status_code: 426
+    methods:
+    - POST
+    name: Medical_Analysis_Microservices-ed_mi_detection_predict_post
+    path_handling: v0
+    paths:
+    - /emergency_detection/mi_detection/predict$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - emergency
+  - https_redirect_status_code: 426
+    methods:
+    - POST
+    name: Medical_Analysis_Microservices-ma_ecg_analysis_explain_xai_lead_importance_post
+    path_handling: v0
+    paths:
+    - /medical_analysis/ecg_analysis/explain/(?<xai_method>\w+)/lead_importance$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - medicalAnalysis
+    - ma_ecg_analysis_explain_(xai_method_lead_importance
+  - https_redirect_status_code: 426
+    methods:
+    - POST
+    name: Medical_Analysis_Microservices-ma_ecg_analysis_explain_xai_tick_importance_post
+    path_handling: v0
+    paths:
+    - /medical_analysis/ecg_analysis/explain/(?<xai_method>\w+)/tick_importance$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - medicalAnalysis
+    - ma_ecg_analysis_explain_(xai_method_tick_importance
+  - https_redirect_status_code: 426
+    methods:
+    - POST
+    name: Medical_Analysis_Microservices-ma_ecg_analysis_explain_xai_time_importance_post
+    path_handling: v0
+    paths:
+    - /medical_analysis/ecg_analysis/explain/(?<xai_method>\w+)/time_importance$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - medicalAnalysis
+    - ma_ecg_analysis_explain_(xai_method_time_importance
+  - https_redirect_status_code: 426
+    methods:
+    - POST
+    name: Medical_Analysis_Microservices-ma_ecg_analysis_identify_segments_post
+    path_handling: v0
+    paths:
+    - /medical_analysis/ecg_analysis/identify_segments$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - medicalAnalysis
+  - https_redirect_status_code: 426
+    methods:
+    - POST
+    name: Medical_Analysis_Microservices-ma_ecg_analysis_visualize_ecg_post
+    path_handling: v0
+    paths:
+    - /medical_analysis/ecg_analysis/visualize_ecg$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - medicalAnalysis
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Medical_Analysis_Microservices-model_admin_model_get
+    path_handling: v0
+    paths:
+    - /model/$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - model_Administration
+  - https_redirect_status_code: 426
+    methods:
+    - DELETE
+    name: Medical_Analysis_Microservices-model_admin_model_model_id_delete
+    path_handling: v0
+    paths:
+    - /model/(?<model_id>\w+)$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - model_Administration
+    - model_(model_id
+  - https_redirect_status_code: 426
+    methods:
+    - POST
+    name: Medical_Analysis_Microservices-model_admin_model_model_id_explain_xai_post
+    path_handling: v0
+    paths:
+    - /model/(?<model_id>\w+)/explain/(?<xai_method>\w+)$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - model_Administraion
+    - model_(model_id_explain_(xai_method
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Medical_Analysis_Microservices-model_admin_model_model_id_get
+    path_handling: v0
+    paths:
+    - /model/(?<model_id>\w+)$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - model_Administration
+    - model_(model_id
+  - https_redirect_status_code: 426
+    methods:
+    - POST
+    name: Medical_Analysis_Microservices-model_admin_model_model_id_predict_post
+    path_handling: v0
+    paths:
+    - /model/(?<model_id>\w+)/predict$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - model_Administration
+    - model_(model_id_predict
+  - https_redirect_status_code: 426
+    methods:
+    - PUT
+    name: Medical_Analysis_Microservices-model_admin_model_model_id_put
+    path_handling: v0
+    paths:
+    - /model/(?<model_id>\w+)$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - model_Administration
+    - model_(model_id
+  - https_redirect_status_code: 426
+    methods:
+    - POST
+    name: Medical_Analysis_Microservices-model_admin_model_post
+    path_handling: v0
+    paths:
+    - /model/$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - model_Administration
+  tags:
+  - fokus
+  write_timeout: 360000
+- connect_timeout: 360000
+  enabled: true
+  host: 192.168.42.139
+  name: Metrics_Microservice
+  path: /
+  port: 80
+  protocol: http
+  read_timeout: 360000
+  retries: 5
+  routes:
+  - https_redirect_status_code: 426
+    methods:
+    - POST
+    name: Metrics_Microservice_clf_accuracy_metric_post
+    path_handling: v0
+    paths:
+    - /clf_accuracy_metric$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - accuracy
+  - https_redirect_status_code: 426
+    methods:
+    - POST
+    name: Metrics_Microservice_compacity_metric_plot_post
+    path_handling: v0
+    paths:
+    - /compacity_metric_plot$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - compacity_plot
+  - https_redirect_status_code: 426
+    methods:
+    - POST
+    name: Metrics_Microservice_compacity_metric_post
+    path_handling: v0
+    paths:
+    - /compacity_metric$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - compacity
+  - https_redirect_status_code: 426
+    methods:
+    - POST
+    name: Metrics_Microservice_consistency_metric_plot_post
+    path_handling: v0
+    paths:
+    - /consistency_metric_plot$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - consistency_plot
+  - https_redirect_status_code: 426
+    methods:
+    - POST
+    name: Metrics_Microservice_consistency_metric_post
+    path_handling: v0
+    paths:
+    - /consistency_metric$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - consistency
+  - https_redirect_status_code: 426
+    methods:
+    - POST
+    name: Metrics_Microservice_evasion_impact_metric_post
+    path_handling: v0
+    paths:
+    - /evasion_impact_metric$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - evasion_impact
+  tags:
+  - UCD
+  write_timeout: 360000
+- connect_timeout: 360000
+  enabled: true
+  host: 192.168.42.139
+  name: Montimage_Microservices
+  path: /
+  port: 80
+  protocol: http
+  read_timeout: 360000
+  retries: 5
+  routes:
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Montimage_Microservices-ac_build_get
+    path_handling: v0
+    paths:
+    - /ac/build$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - models
+  - https_redirect_status_code: 426
+    methods:
+    - POST
+    name: Montimage_Microservices-ac_build_post
+    path_handling: v0
+    paths:
+    - /ac/build$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - models
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Montimage_Microservices-ac_datasets_get
+    path_handling: v0
+    paths:
+    - /ac/datasets$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - models
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Montimage_Microservices-ac_retrain_get
+    path_handling: v0
+    paths:
+    - /ac/retrain$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - models
+  - https_redirect_status_code: 426
+    methods:
+    - POST
+    name: Montimage_Microservices-ac_retrain_modelId_post
+    path_handling: v0
+    paths:
+    - /ac/retrain/{modelId}$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - models
+  - https_redirect_status_code: 426
+    methods:
+    - POST
+    name: Montimage_Microservices-ac_retrain_post
+    path_handling: v0
+    paths:
+    - /ac/retrain$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - models
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Montimage_Microservices-attacks_ctgan_modelId_download_get
+    path_handling: v0
+    paths:
+    - /attacks/ctgan/(?<modelId>\w+)/download$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - attacks
+  - https_redirect_status_code: 426
+    methods:
+    - POST
+    name: Montimage_Microservices-attacks_ctgan_post
+    path_handling: v0
+    paths:
+    - /attacks/ctgan$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - attacks
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Montimage_Microservices-attacks_get
+    path_handling: v0
+    paths:
+    - /attacks$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - attacks
+  - https_redirect_status_code: 426
+    methods:
+    - DELETE
+    name: Montimage_Microservices-attacks_modelId_datasets_delete
+    path_handling: v0
+    paths:
+    - /attacks/(?<modelId>\w+)/datasets$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - attacks
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Montimage_Microservices-attacks_modelId_datasets_get
+    path_handling: v0
+    paths:
+    - /attacks/(?<modelId>\w+)/datasets$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - attacks
+  - https_redirect_status_code: 426
+    methods:
+    - POST
+    name: Montimage_Microservices-attacks_poisoning_ctgan_post
+    path_handling: v0
+    paths:
+    - /attacks/poisoning/ctgan$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - attacks
+  - https_redirect_status_code: 426
+    methods:
+    - POST
+    name: Montimage_Microservices-attacks_poisoning_random-swapping-labels_post
+    path_handling: v0
+    paths:
+    - /api/attacks/poisoning/random-swapping-labels$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - attacks
+  - https_redirect_status_code: 426
+    methods:
+    - POST
+    name: Montimage_Microservices-attacks_poisoning_target-label-flipping_post
+    path_handling: v0
+    paths:
+    - /attacks/poisoning/target-label-flipping$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - attacks
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Montimage_Microservices-attacks_poisoning_typeAttack_modelId_download_get
+    path_handling: v0
+    paths:
+    - /attacks/poisoning/(?<typeAttack>\w+)/(?<modelId>\w+)/download$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - attacks
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Montimage_Microservices-build_get
+    path_handling: v0
+    paths:
+    - /build$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - models
+  - https_redirect_status_code: 426
+    methods:
+    - POST
+    name: Montimage_Microservices-build_post
+    path_handling: v0
+    paths:
+    - /build$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - models
+  - https_redirect_status_code: 426
+    methods:
+    - DELETE
+    name: Montimage_Microservices-logs_delete
+    path_handling: v0
+    paths:
+    - /logs$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - logs
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Montimage_Microservices-logs_fileName_download_get
+    path_handling: v0
+    paths:
+    - /logs/(?<fileName>\w+)/download$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - logs
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Montimage_Microservices-logs_fileName_get
+    path_handling: v0
+    paths:
+    - /logs/(?<fileName>\w+)$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - logs
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Montimage_Microservices-logs_get
+    path_handling: v0
+    paths:
+    - /logs$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - logs
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Montimage_Microservices-metrics_modelId_accuracy_get
+    path_handling: v0
+    paths:
+    - /metrics/(?<modelId>\w+)/accuracy$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - metrics
+    - metrics_(modelId_accuracy
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Montimage_Microservices-metrics_modelId_currentness_get
+    path_handling: v0
+    paths:
+    - /metrics/(?<modelId>\w+)/currentness$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - metrics
+    - metrics_(modelId_currentness
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Montimage_Microservices-metrics_typePoisoningAttack_modelId_impact_get
+    path_handling: v0
+    paths:
+    - /metrics/(?<typePoisoningAttack>\w+)/(?<modelId>\w+)/impact$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - metrics
+    - metrics_(typePoisoningAttack_(modelId_impact
+  - https_redirect_status_code: 426
+    methods:
+    - POST
+    name: Montimage_Microservices-mmt_dataset_post
+    path_handling: v0
+    paths:
+    - /mmt/dataset$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - mmt
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Montimage_Microservices-mmt_get
+    path_handling: v0
+    paths:
+    - /api/mmt$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - mmt
+  - https_redirect_status_code: 426
+    methods:
+    - POST
+    name: Montimage_Microservices-mmt_offline_post
+    path_handling: v0
+    paths:
+    - /api/mmt/offline$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - mmt
+  - https_redirect_status_code: 426
+    methods:
+    - POST
+    name: Montimage_Microservices-mmt_online_post
+    path_handling: v0
+    paths:
+    - /mmt/online$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - mmt
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Montimage_Microservices-mmt_stop_get
+    path_handling: v0
+    paths:
+    - /api/mmt/stop$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - mmt
+  - https_redirect_status_code: 426
+    methods:
+    - DELETE
+    name: Montimage_Microservices-models_app_app_delete
+    path_handling: v0
+    paths:
+    - /models/app/{app}$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - models
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Montimage_Microservices-models_get
+    path_handling: v0
+    paths:
+    - /api/models$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - models
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Montimage_Microservices-models_modelId__download_get
+    path_handling: v0
+    paths:
+    - /models/{moedlId}/download$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - models
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Montimage_Microservices-models_modelId_build-config_get
+    path_handling: v0
+    paths:
+    - /models/{modelId}/build-config$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - models
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Montimage_Microservices-models_modelId_confusion-matrix_get
+    path_handling: v0
+    paths:
+    - /models/{modelId}/confusion-matrix$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - models
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Montimage_Microservices-models_modelId_datasets_datasetType_download_get
+    path_handling: v0
+    paths:
+    - /models/{modelId}/datasets/{datasetType}/download$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - models
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Montimage_Microservices-models_modelId_datasets_get
+    path_handling: v0
+    paths:
+    - /models/{modelId}/datasets$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - models
+  - https_redirect_status_code: 426
+    methods:
+    - DELETE
+    name: Montimage_Microservices-models_modelId_delete
+    path_handling: v0
+    paths:
+    - /models/{modelId}$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - models
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Montimage_Microservices-models_modelId_get
+    path_handling: v0
+    paths:
+    - /models/{modelId}$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - models
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Montimage_Microservices-models_modelId_prediction_get
+    path_handling: v0
+    paths:
+    - /models/{modelId}/predictions$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - models
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Montimage_Microservices-models_modelId_probabilities_get
+    path_handling: v0
+    paths:
+    - /models/{modelId}/probabilities$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - models
+  - https_redirect_status_code: 426
+    methods:
+    - PUT
+    name: Montimage_Microservices-models_modelId_put
+    path_handling: v0
+    paths:
+    - /models/{modelId}$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - models
+  - https_redirect_status_code: 426
+    methods:
+    - POST
+    name: Montimage_Microservices-pcaps_datasetName_post
+    path_handling: v0
+    paths:
+    - /pcaps/(?<datasetName>\w+)$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - pcaps
+  - https_redirect_status_code: 426
+    methods:
+    - DELETE
+    name: Montimage_Microservices-pcaps_dataset_datasetName_delete
+    path_handling: v0
+    paths:
+    - /pcaps/dataset/(?<datasetName>\w+)$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - pcaps
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Montimage_Microservices-pcaps_dataset_datasetName_get
+    path_handling: v0
+    paths:
+    - /pcaps/dataset/(?<datasetName>\w+)$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - pcaps
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Montimage_Microservices-pcaps_datasets_get
+    path_handling: v0
+    paths:
+    - /pcaps/datasets$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - pcaps
+  - https_redirect_status_code: 426
+    methods:
+    - DELETE
+    name: Montimage_Microservices-pcaps_delete
+    path_handling: v0
+    paths:
+    - /pcaps$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - pcaps
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Montimage_Microservices-pcaps_get
+    path_handling: v0
+    paths:
+    - /pcaps$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - pcaps
+  - https_redirect_status_code: 426
+    methods:
+    - POST
+    name: Montimage_Microservices-pcaps_post
+    path_handling: v0
+    paths:
+    - /pcaps$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - pcaps
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Montimage_Microservices-predict_get
+    path_handling: v0
+    paths:
+    - /predict$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - predictions
+  - https_redirect_status_code: 426
+    methods:
+    - POST
+    name: Montimage_Microservices-predict_post
+    path_handling: v0
+    paths:
+    - /api/predict$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - predictions
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Montimage_Microservices-predict_stop_get
+    path_handling: v0
+    paths:
+    - /predict/stop$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - predictions
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Montimage_Microservices-predictions_get
+    path_handling: v0
+    paths:
+    - /predictions$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - predictions
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Montimage_Microservices-predictions_predictionId_attack_get
+    path_handling: v0
+    paths:
+    - /predictions/(?<predictionId>\w+)/attack$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - predictions
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Montimage_Microservices-predictions_predictionId_download_get
+    path_handling: v0
+    paths:
+    - /predictions/(?<predictionId>\w+)/download$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - predictions
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Montimage_Microservices-predictions_predictionId_get
+    path_handling: v0
+    paths:
+    - /predictions/(?<predictionId>\w+)$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - predictions
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Montimage_Microservices-predictions_predictionId_normal_get
+    path_handling: v0
+    paths:
+    - /predictions/(?<predictionId>\w+)/normal$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - predictions
+  - https_redirect_status_code: 426
+    methods:
+    - DELETE
+    name: Montimage_Microservices-reports_delete
+    path_handling: v0
+    paths:
+    - /reports$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - reports
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Montimage_Microservices-reports_get
+    path_handling: v0
+    paths:
+    - /reports$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - reports
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Montimage_Microservices-reports_reportId_fileName_download_get
+    path_handling: v0
+    paths:
+    - /reports/{reportId}/{fileName}/download$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - reports
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Montimage_Microservices-reports_reportId_fileName_get
+    path_handling: v0
+    paths:
+    - /reports/{reportId}/(?<fileName>\w+)$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - reports
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Montimage_Microservices-reports_reportId_get
+    path_handling: v0
+    paths:
+    - /reports/{reportId}$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - reports
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Montimage_Microservices-retrain_get
+    path_handling: v0
+    paths:
+    - /retrain$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - models
+  - https_redirect_status_code: 426
+    methods:
+    - POST
+    name: Montimage_Microservices-retrain_modelId_post
+    path_handling: v0
+    paths:
+    - /retrain/{modelId}$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - models
+  - https_redirect_status_code: 426
+    methods:
+    - POST
+    name: Montimage_Microservices-retrain_post
+    path_handling: v0
+    paths:
+    - /retrain$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - models
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Montimage_Microservices-xai_explainations_modelId_get
+    path_handling: v0
+    paths:
+    - /xai/explainations/(?<modelId>\w+)$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - xai
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Montimage_Microservices-xai_get
+    path_handling: v0
+    paths:
+    - /xai$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - xai
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Montimage_Microservices-xai_lime_explainations_modelId_labelId_get
+    path_handling: v1
+    paths:
+    - /xai/lime/explainations/(?<modelId>\w+)/(?<labelId>\w+)$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - xai
+  - https_redirect_status_code: 426
+    methods:
+    - POST
+    name: Montimage_Microservices-xai_lime_post
+    path_handling: v0
+    paths:
+    - /xai/lime$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - xai
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Montimage_Microservices-xai_shap_explainations_modelId_labelId_get
+    path_handling: v0
+    paths:
+    - /xai/shap/explainations/(?<modelId>\w+)/(?<labelId>\w+)$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - xai
+  - https_redirect_status_code: 426
+    methods:
+    - POST
+    name: Montimage_Microservices-xai_shap_post
+    path_handling: v0
+    paths:
+    - /api/xai/shap$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - xai
+  tags:
+  - montimage
+  write_timeout: 360000
+- connect_timeout: 360000
+  enabled: true
+  host: 192.168.42.139
+  name: Privacy_Microservices
+  path: /
+  port: 80
+  protocol: http
+  read_timeout: 360000
+  retries: 5
+  routes:
+  - https_redirect_status_code: 426
+    methods:
+    - POST
+    name: Privacy_Microservices-differential_privacy_execute_post
+    path_handling: v0
+    paths:
+    - /api/v3/differential_privacy/execute$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - privacy
+  tags:
+  - telefonica
+  write_timeout: 360000
+- connect_timeout: 360000
+  enabled: true
+  host: 192.168.42.139
+  name: Security_Diagnosis_Service
+  path: /
+  port: 80
+  protocol: http
+  read_timeout: 360000
+  retries: 5
+  routes:
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Security_Diagnosis_Service-attacks_get
+    path_handling: v0
+    paths:
+    - /attacks$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - attacks
+  - https_redirect_status_code: 426
+    methods:
+    - POST
+    name: Security_Diagnosis_Service-attacks_post
+    path_handling: v0
+    paths:
+    - /attacks$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - attacks
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Security_Diagnosis_Service-attacks_task_id_get
+    path_handling: v0
+    paths:
+    - /attacks/(?<task_id>\w+)$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - attacks
+    - attacks_(task_id
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Security_Diagnosis_Service-data_data_id_get
+    path_handling: v0
+    paths:
+    - /data/(?<data_id>\w+)$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - data
+    - data_(data_id
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Security_Diagnosis_Service-data_get
+    path_handling: v0
+    paths:
+    - /data$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - data
+  - https_redirect_status_code: 426
+    methods:
+    - POST
+    name: Security_Diagnosis_Service-data_post
+    path_handling: v0
+    paths:
+    - /data$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - data
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Security_Diagnosis_Service-models_get
+    path_handling: v0
+    paths:
+    - /models$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - models
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Security_Diagnosis_Service-models_model_id_get
+    path_handling: v0
+    paths:
+    - /models/(?<model_id>\w+)$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - models
+    - models_(model_id
+  - https_redirect_status_code: 426
+    methods:
+    - POST
+    name: Security_Diagnosis_Service-models_post
+    path_handling: v0
+    paths:
+    - /models$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - models
+  tags:
+  - withSecure
+  write_timeout: 360000
+- connect_timeout: 360000
+  enabled: true
+  host: 192.168.42.139
+  name: XAI_Microservices
+  path: /
+  port: 80
+  protocol: http
+  read_timeout: 360000
+  retries: 5
+  routes:
+  - https_redirect_status_code: 426
+    methods:
+    - POST
+    name: XAI_Microservices-explain_api_explain_lime_image_post
+    path_handling: v0
+    paths:
+    - /explain_lime/image$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - OAS3_import
+    - OAS3file_openapi.yaml
+  - https_redirect_status_code: 426
+    methods:
+    - POST
+    name: XAI_Microservices-explain_api_explain_occlusion_image_post
+    path_handling: v0
+    paths:
+    - /explain_occlusion/image$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - OAS3_import
+    - OAS3file_openapi.yaml
+  - https_redirect_status_code: 426
+    methods:
+    - POST
+    name: XAI_Microservices-explain_api_explain_shap_image_post
+    path_handling: v0
+    paths:
+    - /explain_shap/image$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - OAS3_import
+    - OAS3file_openapi.yaml
+  - https_redirect_status_code: 426
+    methods:
+    - POST
+    name: XAI_Microservices-predict_api_predict_image_post
+    path_handling: v0
+    paths:
+    - /predict/image$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - OAS3_import
+    - OAS3file_openapi.yaml
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: XAI_Microservices-read_root_test_get
+    path_handling: v0
+    paths:
+    - /test$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - OAS3_import
+    - OAS3file_openapi.yaml
+  tags:
+  - OAS3_import
+  - OAS3file_openapi.yaml
+  write_timeout: 360000
