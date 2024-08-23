@@ -1,4 +1,5 @@
 absl-py==1.2.0
+aiofile==3.8.1
 anyconfig==0.13.0
 anyio==3.6.1
 asttokens==2.0.8
@@ -56,7 +57,7 @@ lime==0.2.0.1
 llvmlite==0.39.1
 Markdown==3.4.1
 MarkupSafe==2.1.1
-matplotlib==3.6.1
+matplotlib>=3.1,<3.7
 matplotlib-inline==0.1.6
 networkx==2.8.7
 numba==0.56.3
@@ -71,7 +72,7 @@ packaging==21.3
 pandas==1.5.1
 parso==0.8.3
 pickleshare==0.7.5
-pillow ==10.0.0
+pillow==10.0.0
 prance==0.21.8.0
 prometheus-client==0.14.1
 prompt-toolkit==3.0.31
@@ -107,7 +108,7 @@ six==1.16.0
 slicer==0.0.7
 sniffio==1.3.0
 stack-data==0.5.1
-starlette==0.20.4
+starlette>=2.27.0,<0.28.0
 swagger-ui-bundle==0.0.9
 tensorboard==2.10.1
 tensorboard-data-server==0.6.1
@@ -132,6 +133,5 @@ wcwidth==0.2.5
 Werkzeug==2.2.2
 wrapt==1.14.1
 zipp==3.9.0
-tf_explain==0.3.1
 seaborn==0.12.2
 aiofile==3.8.8
