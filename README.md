@@ -13,3 +13,7 @@
 - pip install -r requirements.txt
 - python3 main.py
 
+## Deploy using Docker
+
+- Go to xai_docker folder and run 'sudo docker-compose up --build'
+
