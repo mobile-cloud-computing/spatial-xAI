@@ -1,0 +1,13 @@
+version: '3.8'
+services:
+  web:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: fastapi-app
+    ports:
+      - "8090:8090"
+    volumes:
+      - ../:/app
+    environment:
+      - PORT=8090
