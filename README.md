@@ -42,7 +42,7 @@ python3 main.py
 
 ## Deploy using Docker
 
-Go to xai_docker folder and run below command
+Go to the 'xai_docker' folder and run the command below
 
 ```bash
 sudo docker-compose up --build
