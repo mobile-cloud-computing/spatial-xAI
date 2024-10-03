@@ -1,19 +1,50 @@
 # xAI Service
 
-## Installation instructions (python 3.8.10)
+The xAI methods (LIME, SHAP, Occlusion Sensivity) are provided as microservices which is accessible by FastAPI (REST API). 
 
-- git clone https://github.com/Mrasinthe/xAI.git
-- cd xAI
+## Prerequisites
 
+- Python 3.8.10
+- Docker installed if you wish to containerize the application
 
-## Run the server
+## Installation
 
-- python3 -m venv venv
-- source venv/bin/activate
-- pip install -r requirements.txt
-- python3 main.py
+Clone the repository to your local machine:
+
+```bash
+git clone https://github.com/Mrasinthe/xAI.git
+```
+
+Create and activate environment Variable:
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+Change directory to the cloned repository:
+
+```bash
+cd xAI
+```
+
+Install python requirements:
+
+```bash
+pip install -r requirements.txt
+```
+
+## Run the application locally
+
+```bash
+python3 main.py
+```
 
 ## Deploy using Docker
 
-- Go to xai_docker folder and run 'sudo docker-compose up --build'
+Go to xai_docker folder and run below command
+
+```bash
+sudo docker-compose up --build
+```
 
