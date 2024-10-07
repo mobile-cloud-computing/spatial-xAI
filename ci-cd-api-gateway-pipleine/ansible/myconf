@@ -1,0 +1,472 @@
+server {
+        listen 80;
+        server_name 192.168.42.139;
+        #server_name 192.168.42.82;
+        #server_name 193.40.154.143;
+
+#	location / {
+#	return 301 https://$host$request_uri;
+#	}
+
+        #xai services
+        location /explain_shap/image {
+        proxy_pass http://backend_servers_shap;
+        }
+        location /explain_lime/image {
+        proxy_pass http://backend_servers_lime;
+        }
+        location /explain_occlusion/image {
+        proxy_pass http://backend_servers_occlusion;
+        }
+        
+        #fairness service
+        location /explain_fairness/file {
+        proxy_pass http://backend_servers_fairness;
+        }
+
+        #montimage service
+        location /api/mmt {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/mmt/stop {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/mmt/offline {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/mmt/dataset {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/mmt/online {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/build {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/ac/datasets {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/ac/build {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/retrain {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/retrain/(?<modelId>[^/]+)  {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/ac/retrain {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/ac/retrain/(?<modelId>[^/]+)  {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/models {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/models/app/(?<app>[^/]+)  {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/models/(?<modelId>[^/]+)  {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/models/(?<modelId>[^/]+)/download {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/models/(?<modelId>[^/]+)/datasets {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/models/(?<modelId>[^/]+)/datasets/(?<datasetType>[^/]+)/download {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/models/(?<modelId>[^/]+)/confusion-matrix {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/models/(?<modelId>[^/]+)/build-config {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/models/(?<modelId>[^/]+)/predictions {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/models/(?<modelId>[^/]+)/probabilities {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/reports {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/reports/(?<reportId>[^/]+) {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/reports/(?<reportId>[^/]+)/(?<fileName>[^/]+)/download {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/reports/(?<reportId>[^/]+)/(?<fileName>[^/]+) {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/pcaps {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/pcaps/datasets {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/pcaps/dataset/(?<datasetName>[^/]+) {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/pcaps/(?<datasetName>[^/]+) {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/logs {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/logs/(?<fileName>[^/]+)/download {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/logs/(?<fileName>[^/]+) {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/predict {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/predict/stop {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/predictions {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/predictions/(?<predictionId>[^/]+) {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/predictions/(?<predictionId>[^/]+)/download {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/predictions/(?<predictionId>[^/]+)/attack {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/predictions/(?<predictionId>[^/]+)/normal {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/xai {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/xai/shap {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/xai/shap/explanations/(?<modelId>[^/]+)/(?<labelId>[^/]+) {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/xai/lime {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/xai/lime/explanations/(?<modelId>[^/]+)/(?<labelId>[^/]+) {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/xai/explanations/(?<modelId>[^/]+) {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/attacks {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/attacks/ctgan {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/attacks/ctgan/(?<modelId>[^/]+)/download {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/attacks/poisoning/ctgan {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/attacks/poisoning/random-swapping-labels {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/attacks/poisoning/target-label-flipping {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/attacks/(?<modelId>[^/]+)/datasets {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/attacks/poisoning/(?<typeAttack>[^/]+)/(?<modelId>[^/]+)/download {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/metrics/(?<modelId>[^/]+)/accuracy {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/metrics/(?<modelId>[^/]+)/currentness {
+        proxy_pass http://backend_servers_montimage;
+        }
+        location /api/metrics/(?<typePoisoningAttack>[^/]+)/(?<modelId>[^/]+)/impact {
+        proxy_pass http://backend_servers_montimage;
+        }
+        
+        #DP service
+        location /api/v3/differential_privacy/execute {
+        proxy_pass http://backend_servers_telefonica;
+        }
+
+        #Withsecure service
+	location /attacks {
+	proxy_pass http://backend_servers_withsecure;
+	}
+	location /attacks/(?<task_id>[^/]+) {
+	proxy_pass http://backend_servers_withsecure;
+	}
+        location /models { 
+        proxy_pass http://backend_servers_withsecure;
+        }
+        location /models/(?<model_id>[^/]+) { 
+        proxy_pass http://backend_servers_withsecure;
+        }
+	location /data {
+        proxy_pass http://backend_servers_withsecure;
+        }
+        location /data/(?<data_id>[^/]+) {
+        proxy_pass http://backend_servers_withsecure;
+        }
+
+	#UCD service
+	location /clf_accuracy_metric {
+	proxy_pass http://backend_servers_ucd;
+	}
+	location /consistency_metric { 
+        proxy_pass http://backend_servers_ucd;
+        }
+	location /consistency_metric_plot {
+        proxy_pass http://backend_servers_ucd;
+        }
+	location /compacity_metric { 
+        proxy_pass http://backend_servers_ucd;
+        }
+	location /compacity_metric_plot {
+        proxy_pass http://backend_servers_ucd;
+        }
+	location /evasion_impact_metric { 
+        proxy_pass http://backend_servers_ucd;
+        }
+
+        #TUD service
+	location /enhanced/interpretability/explain {
+        proxy_pass http://backend_servers_tud;
+        }
+
+        #Llama service
+	location /llama {
+        proxy_pass http://backend_servers_llama;
+        }
+	location /llama/change-text {
+        proxy_pass http://backend_servers_llama;
+        }
+
+        #NT service
+        location /api/nts/reports {
+        proxy_pass http://backend_servers_nts;
+        }
+
+        location /api/nts/mmt {
+        proxy_pass http://backend_servers_nts;
+        }
+
+        location /api/nts/xai {
+        proxy_pass http://backend_servers_nts;
+        }
+
+        location /api/nts/build {
+        proxy_pass http://backend_servers_nts;
+        }
+
+        location /api/nts/ac/datasets {
+        proxy_pass http://backend_servers_nts;
+        }
+
+        location /api/nts/ac/build {
+        proxy_pass http://backend_servers_nts;
+        }
+ 
+        location /api/nts/models {
+        proxy_pass http://backend_servers_nts;
+        }
+
+        # Dynamic modelId endpoints
+        location /api/nts/models/(?<modelId>[^/]+) {
+        proxy_pass http://backend_servers_nts;
+        }
+
+        location /api/nts/models/(?<modelId>[^/]+)/download {
+        proxy_pass http://backend_servers_nts;
+        }
+
+        location /api/nts/models/(?<modelId>[^/]+)/datasets/(?<datasetType>[^/]+)/download {
+        proxy_pass http://backend_servers_nts;
+        }
+
+        location /api/nts/models/(?<modelId>[^/]+)/datasets/(?<datasetType>[^/]+)/view {
+        proxy_pass http://backend_servers_nts;
+        }
+
+        location /api/nts/attacks/poisoning/(?<selectedAttack>[^/]+)/(?<modelId>[^/]+)/view {
+        proxy_pass http://backend_servers_nts;
+        }
+
+        # Dynamic XAI endpoints
+        location /api/nts/xai/lime/explanations/(?<modelId>[^/]+)/(?<labelId>[^/]+) {
+        proxy_pass http://backend_servers_nts;
+        }
+
+        location /api/nts/attacks {
+        proxy_pass http://backend_servers_nts;
+        }
+
+        location /api/nts/attacks/(?<modelId>[^/]+)/datasets {
+        proxy_pass http://backend_servers_nts;
+        }
+
+        location /api/nts/attacks/poisoning/random-swapping-labels {
+        proxy_pass http://backend_servers_nts;
+        }
+
+        location /api/nts/attacks/poisoning/target-label-flipping {
+        proxy_pass http://backend_servers_nts;
+        }
+
+        location /api/nts/attacks/ctgan {
+        proxy_pass http://backend_servers_nts;
+        }
+
+        location /api/nts/models/(?<modelId>[^/]+)/predictions {
+        proxy_pass http://backend_servers_nts;
+        }
+
+        location /api/nts/xai/lime {
+        proxy_pass http://backend_servers_nts;
+        }
+
+        location /api/nts/models/(?<modelId>[^/]+)/probabilities {
+        proxy_pass http://backend_servers_nts;
+        }
+
+        location /api/nts/models/(?<modelId>[^/]+)/build-config {
+        proxy_pass http://backend_servers_nts;
+        }
+
+        location /api/nts/xai/shap {
+        proxy_pass http://backend_servers_nts;
+        }
+
+        location /api/nts/xai/shap/explanations/(?<modelId>[^/]+)/(?<labelIndex>[^/]+) {
+        proxy_pass http://backend_servers_nts;
+        }
+
+        # Dynamic retrain endpoints
+        location /api/nts/ac/retrain {
+        proxy_pass http://backend_servers_nts;
+        }
+
+        location /api/nts/retrain/(?<modelId>[^/]+) {
+        proxy_pass http://backend_servers_nts;
+        }
+
+ 
+       }
+
+#map $uri $data_id {
+#    ~^/emergency_detection/mi_detection/emergency_data/(?<id>[^/]+) $id;
+#}
+server {
+        listen 443 ssl;
+        server_name 192.168.42.139;
+#  medical-analysis-service.apps.osc.fokus.fraunhofer.de;
+
+	ssl_certificate /etc/nginx/ssl/example2.pem;
+	ssl_certificate_key /etc/nginx/ssl/example2.key;
+	ssl_protocols TLSv1 TLSv1.1 TLSv1.2 TLSv1.3;
+
+	proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+ 
+	location /emergency_detection/mi_detection/predict {
+#       proxy_pass https://medical-analysis-service.apps.osc.fokus.fraunhofer.de/emergency_detection/mi_detection/predict;
+	proxy_pass https://backend_servers_fokus;
+#	proxy_set_header Host $host;
+#       proxy_set_header X-Real-IP $remote_addr;
+#       proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+#       proxy_set_header X-Forwarded-Proto $scheme;
+#	proxy_ssl_verify off;
+        }
+
+	location /emergency_detection/mi_detection/explain {
+#       proxy_pass https://medical-analysis-service.apps.osc.fokus.fraunhofer.de/emergency_detection/mi_detection/explain;
+	proxy_pass https://backend_servers_fokus;
+        }
+
+	location /emergency_detection/mi_detection/emergency_data {
+#       proxy_pass https://medical-analysis-service.apps.osc.fokus.fraunhofer.de/emergency_detection/mi_detection/emergency_data;
+	proxy_pass https://backend_servers_fokus;
+        }
+
+	location /emergency_detection/mi_detection/emergency_data/(?<data_id>[^/]+) {
+	proxy_pass https://backend_servers_fokus;
+        #proxy_pass https://medical-analysis-service.apps.osc.fokus.fraunhofer.de/emergency_detection/mi_detection/emergency_data/$data_id ;
+        }
+
+	location /medical_analysis/ecg_analysis/explain/(?<xai_method>[^/]+)/tick_importance {
+        proxy_pass https://backend_servers_fokus;
+        }
+
+	location /medical_analysis/ecg_analysis/explain/(?<xai_method>[^/]+)/time_importance {
+        proxy_pass https://backend_servers_fokus;
+        }
+
+        location /medical_analysis/ecg_analysis/explain/(?<xai_method>[^/]+)/lead_importance {
+        proxy_pass https://backend_servers_fokus;
+        }
+
+	location /model/ {
+        proxy_pass https://backend_servers_fokus;
+        } 
+
+	location /model/(?<model_id>[^/]+) {
+        proxy_pass https://backend_servers_fokus;
+        }
+
+	location /model/(?<model_id>[^/]+)/predict {
+        proxy_pass https://backend_servers_fokus;
+        }
+   
+        location /model/(?<model_id>[^/]+)/evaluate {
+        proxy_pass https://backend_servers_fokus;
+        }
+
+
+	location /model/(?<model_id>[^/]+)/explain/(?<xai_method>[^/]+) {
+        proxy_pass https://backend_servers_fokus;
+        }
+
+	location /health_check {
+        proxy_pass https://backend_servers_fokus;
+        }
+	
+	location /user_support/descriptions/xai/(?<xai_method>[^/]+) {
+        proxy_pass https://backend_servers_fokus;
+        }
+	
+	location /user_support/descriptions/ecg {
+        proxy_pass https://backend_servers_fokus;
+        }
+	
+	location /user_support/descriptions/xai_visualization_approaches/(?<xai_visualization_approach>[^/]+) {
+        proxy_pass https://backend_servers_fokus;
+        }
+
+	location /user_support/descriptions/classification_prediction {
+        proxy_pass https://backend_servers_fokus;
+	}
+
+	location /enhanced/interpretability/explain {
+        proxy_pass https://backend_servers_tud;
+        }
+		
+	return 301 https://$host$request_uri;
+
+}
+#this is a test configuration when we want to have SHAP enabled on all 3 VMs.
+# so you need to uncomment all three end points of backend_servers_shap.
