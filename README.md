@@ -12,7 +12,7 @@ The xAI methods (LIME, SHAP, Occlusion Sensivity) are provided as microservices 
 Clone the repository to your local machine:
 
 ```bash
-git clone https://github.com/Mrasinthe/xAI.git
+git clone https://github.com/mobile-cloud-computing/spatial-xAI.git
 ```
 
 Create and activate environment Variable:
